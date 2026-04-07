@@ -38,6 +38,14 @@ export class StaffRepository {
         return rows[0] ?? null
     }
 
+    async findByUsername(username: string): Promise<Staff | null> {
+        const [rows] = await pool.promise().query<Staff[]>(
+            'SELECT id, username, first_name, last_name, email, phone, address, status, created_at, updated_at FROM staff WHERE username = ? LIMIT 1',
+            [username]
+        )
+        return rows[0] ?? null
+    }
+
     async findByEmail(email: string): Promise<Staff | null> {
         const [rows] = await pool.promise().query<Staff[]>(
             'SELECT id, username, first_name, last_name, email, phone, address, status, created_at, updated_at FROM staff WHERE email = ? LIMIT 1',
@@ -54,9 +62,15 @@ export class StaffRepository {
     }
 
     async createStaff(data: CreateAdminData): Promise<number> {
-        const existing = await this.findByEmail(data.email) 
-        if (existing) {
+        const [existingEmail, existingUsername] = await Promise.all([
+            this.findByEmail(data.email),
+            this.findByUsername(data.username)
+        ])
+        if (existingEmail) {
             throw new Error(`Staff with email '${data.email}' already exists`)
+        }
+        if (existingUsername) {
+            throw new Error(`Staff with username '${data.username}' already exists`)
         }
 
         const [result] = await pool.promise().query<ResultSetHeader>(
