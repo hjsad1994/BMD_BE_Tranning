@@ -2,8 +2,9 @@ import mysql from "mysql2";
 
 const connection = mysql.createConnection({
   host: "127.0.0.1",
+  port: "8889",
   user: "root",
-  password: "",
+  password: "root",
   database: "tranning_db",
 });
 

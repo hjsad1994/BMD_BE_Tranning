@@ -1,7 +1,7 @@
 import connection from "./mysql.js";
 
-const createRoleTableSql = `
-CREATE TABLE IF NOT EXISTS roles (
+const createUserTableSql = `
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     role_name VARCHAR(30) NOT NULL UNIQUE
 )
@@ -17,14 +17,14 @@ CREATE TABLE IF NOT EXISTS staff (
     status ENUM('active', 'inactive', 'on_leave') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_staff_role FOREIGN KEY (role_id) REFERENCES roles(id)
+    CONSTRAINT fk_staff_role FOREIGN KEY (role_id) REFERENCES users(id)
 )
 `;
 
 const initDatabase = (): void => {
     console.log("Connected to database");
 
-    connection.query(createRoleTableSql, (roleError) => {
+    connection.query(createUserTableSql, (roleError) => {
         if (roleError) {
             console.log("Create roles table failed", roleError.message);
             return;
