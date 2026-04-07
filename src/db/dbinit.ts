@@ -1,36 +1,65 @@
 import connection from "./mysql.js";
 
-const createUserTableSql = `
-CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    role_name VARCHAR(30) NOT NULL UNIQUE
-)
-`;
-
 const createStaffTableSql = `
 CREATE TABLE IF NOT EXISTS staff (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(255) NOT NULL,
-    last_name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    role_id INT UNIQUE,
-    status ENUM('active', 'inactive', 'on_leave') DEFAULT 'active',
+    username VARCHAR(100) NOT NULL UNIQUE,
+    first_name NVARCHAR(100) NOT NULL,
+    last_name NVARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    address NVARCHAR(255),
+    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_staff_role FOREIGN KEY (role_id) REFERENCES users(id)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
 `;
+
+const createCustomerTableSql = `
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    first_name NVARCHAR(100) NOT NULL,
+    last_name NVARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    address NVARCHAR(255),
+    status ENUM('active', 'inactive') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)
+`;
+// const createCustomerTableSql = `
+// CREATE TABLE IF NOT EXISTS customers (
+//     id INT AUTO_INCREMENT PRIMARY KEY,
+//     user_id INT UNIQUE,
+//     first_name VARCHAR(255) NOT NULL,
+//     last_name VARCHAR(255) NOT NULL,
+//     email VARCHAR(255) NOT NULL UNIQUE,
+//     phone VARCHAR(20),
+//     address VARCHAR(255),
+//     status ENUM('active', 'inactive') DEFAULT 'active',
+//     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+//     CONSTRAINT fk_customers_user FOREIGN KEY (user_id) REFERENCES users(id)
+// )
+// `;
+
+
 
 const initDatabase = (): void => {
     console.log("Connected to database");
 
-    connection.query(createUserTableSql, (roleError) => {
+    connection.query(createCustomerTableSql, (roleError) => {
         if (roleError) {
             console.log("Create roles table failed", roleError.message);
             return;
         }
+        console.log("customer table ready");
+    })
 
-        console.log("role table ready");
 
         connection.query(createStaffTableSql, (staffError) => {
             if (staffError) {
@@ -40,7 +69,16 @@ const initDatabase = (): void => {
 
             console.log("staff table ready");
         });
-    });
+
+        // connection.query(createCustomerTableSql, (staffError) => {
+        //     if (staffError) {
+        //         console.log("Create staff table failed", staffError.message);
+        //         return;
+        //     }
+
+        //     console.log("staff table ready");
+        // });
+    // });
 };
 
 export default initDatabase;
