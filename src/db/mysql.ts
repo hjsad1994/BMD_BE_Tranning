@@ -1,6 +1,7 @@
 import mysql from "mysql2";
+import type { Pool } from "mysql2";
 
-const connection = mysql.createConnection({
+const pool: Pool = mysql.createPool({
   host: "127.0.0.1",
   port: 8889,
   user: "root",
@@ -8,12 +9,13 @@ const connection = mysql.createConnection({
   database: "tranning_db",
 });
 
-connection.connect((err: Error | null) => {
+pool.getConnection((err, connection) => {
   if (err) {
     throw err;
   }
 
   console.log("Connected to MySQL");
+  connection.release();
 });
 
-export default connection;
+export default pool;
