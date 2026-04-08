@@ -1,36 +1,6 @@
-
 import type { ResultSetHeader, RowDataPacket } from 'mysql2'
 import pool from '../db/mysql.js'
-
-interface Staff extends RowDataPacket {
-    id: number
-    username: string
-    first_name: string
-    last_name: string
-    email: string
-    password_hash: string
-    phone: string | null
-    address: string | null
-    status: 'active' | 'inactive'
-    created_at: Date
-    updated_at: Date
-}
-
-interface CreateAdminData {
-    username: string
-    first_name: string
-    last_name: string
-    email: string
-    password_hash: string
-}
-interface UpdateProfileData {
-    first_name?: string,
-    last_name?: string,
-    email?: string,
-    phone?: string,
-    address?: string,
-    avatar?: string
-}
+import type { Staff, CreateStaffData, UpdateProfileData } from '../types/staff.types.js'
 
 export class StaffRepository {
 
@@ -40,9 +10,10 @@ export class StaffRepository {
         )
         return rows[0] !== undefined ? Number(rows[0].total) : 0
     }
+
     async findById(id: number): Promise<Staff | null> {
         const [rows] = await pool.promise().query<Staff[]>(
-            'SELECT id, username, first_name, last_name, email, phone, address, status, created_at, updated_at FROM staff WHERE id = ? LIMIT 1',
+            'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM staff WHERE id = ? LIMIT 1',
             [id]
         )
         return rows[0] ?? null
@@ -50,7 +21,7 @@ export class StaffRepository {
 
     async findByUsername(username: string): Promise<Staff | null> {
         const [rows] = await pool.promise().query<Staff[]>(
-            'SELECT id, username, first_name, last_name, email, phone, address, status, created_at, updated_at FROM staff WHERE username = ? LIMIT 1',
+            'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM staff WHERE username = ? LIMIT 1',
             [username]
         )
         return rows[0] ?? null
@@ -58,7 +29,7 @@ export class StaffRepository {
 
     async findByEmail(email: string): Promise<Staff | null> {
         const [rows] = await pool.promise().query<Staff[]>(
-            'SELECT id, username, first_name, last_name, email, phone, address, status, created_at, updated_at FROM staff WHERE email = ? LIMIT 1',
+            'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM staff WHERE email = ? LIMIT 1',
             [email]
         )
         return rows[0] ?? null
@@ -66,12 +37,12 @@ export class StaffRepository {
 
     async findAll(): Promise<Staff[]> {
         const [rows] = await pool.promise().query<Staff[]>(
-            'SELECT id, username, first_name, last_name, email, phone, address, status, created_at, updated_at FROM staff'
+            'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM staff'
         )
         return rows
     }
 
-    async createStaff(data: CreateAdminData): Promise<number> {
+    async createStaff(data: CreateStaffData): Promise<number> {
         const [existingEmail, existingUsername] = await Promise.all([
             this.findByEmail(data.email),
             this.findByUsername(data.username)
@@ -89,13 +60,11 @@ export class StaffRepository {
         )
         return result.insertId
     }
+
     async updateProfile(id: number, data: UpdateProfileData): Promise<boolean> {
         const fields: string[] = []
         const values: unknown[] = []
-        if (data.email !== undefined) {
-            fields.push('email = ?')
-            values.push(data.email)
-        }
+
         if (data.first_name !== undefined) {
             fields.push('first_name = ?')
             values.push(data.first_name)
@@ -103,6 +72,10 @@ export class StaffRepository {
         if (data.last_name !== undefined) {
             fields.push('last_name = ?')
             values.push(data.last_name)
+        }
+        if (data.email !== undefined) {
+            fields.push('email = ?')
+            values.push(data.email)
         }
         if (data.phone !== undefined) {
             fields.push('phone = ?')
@@ -116,24 +89,24 @@ export class StaffRepository {
             fields.push('avatar = ?')
             values.push(data.avatar)
         }
+
         if (fields.length === 0) {
             return false
         }
-        values.push(id)
 
+        values.push(id)
         const [result] = await pool.promise().query<ResultSetHeader>(
             `UPDATE staff SET ${fields.join(', ')} WHERE id = ?`,
             values
-          )
-        return result.affectedRows > 0
-    }
-    async updatePassowrd(id: number, passwordHash: string): Promise<boolean> {
-        const [result] = await pool.promise().query<ResultSetHeader> (
-            `UPDATE staff SET passowrd_hash = ? WHERE id = ?`,
-            [passwordHash, id]
         )
         return result.affectedRows > 0
     }
 
-
+    async updatePassword(id: number, passwordHash: string): Promise<boolean> {
+        const [result] = await pool.promise().query<ResultSetHeader>(
+            'UPDATE staff SET password_hash = ? WHERE id = ?',
+            [passwordHash, id]
+        )
+        return result.affectedRows > 0
+    }
 }
