@@ -2,6 +2,13 @@ import bcrypt from 'bcrypt'
 import { StaffRepository } from '../repository/staff.repository.js'
 import type { InitStaffData, UpdateProfileData } from '../types/staff.types.js'
 
+
+type StaffListParams = {
+    page: number
+    limit: number
+    search?: string
+    status?: 'active' | 'inactive'
+}
 export class StaffServices {
     private staffRepository = new StaffRepository()
 
@@ -20,11 +27,12 @@ export class StaffServices {
             email,
             first_name,
             last_name,
-            password_hash: passwordHash
+            password_hash: passwordHash,
+            status: 'active'
         })
         return { staffId, username, email }
     }
-
+    // update self profile
     async updateProfile(id: number, data: UpdateProfileData): Promise<boolean> {
         const staff = await this.staffRepository.findById(id)
         if (!staff) {
@@ -51,6 +59,45 @@ export class StaffServices {
         }
 
         return this.staffRepository.updateProfile(id, data)
+    }
+    async updateStatus(id: number, status: 'active' | 'inactive'): Promise<boolean> {
+        if(!['active', 'inactive'].includes(status)) {
+            throw new Error('Invalid status value')
+        }
+        const staff = await this.staffRepository.findById(id)
+        if(!staff) {
+            throw new Error('staff not found')
+        }
+        return this.staffRepository.updateStatus(id, status)
+    }
+    async changePassword(id: number, oldPassword: string, newPassword: string): Promise<boolean> {
+        if(!oldPassword || !newPassword) {
+            throw new Error('old password and new password is required')
+        }
+        const staff = await this.staffRepository.findAuthById(id)
+        if(!staff) {
+            throw new Error('staff not found')
+        }
+        const isMatch = await bcrypt.compare(oldPassword, staff.password_hash) 
+        if(!isMatch) {
+            throw new Error('Old password is incorrect')
+        }
+        const passwordHash = await bcrypt.hash(newPassword, 10)
+        return await this.staffRepository.updatePassword(id, passwordHash)
+    }
+    async resetPassword(id: number, newPassword: string): Promise<boolean> {
+        if(!newPassword) {
+            throw new Error('Password is required')
+        }
+        const staff = await this.staffRepository.findById(id)
+        if(!staff) {
+            throw new Error('Staff not found')
+        }
+        const passwordHash = await bcrypt.hash(newPassword, 10) 
+        return this.staffRepository.updatePassword(id ,passwordHash)
+    }
+    async getAllStaff() {
+        return await this.staffRepository.findAll()
     }
 }
 

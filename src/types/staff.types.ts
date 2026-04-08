@@ -21,6 +21,7 @@ export interface CreateStaffData {
     last_name: string
     email: string
     password_hash: string
+    status: 'active',
 }
 
 export interface UpdateProfileData {
@@ -53,4 +54,10 @@ export interface StaffProfile {
     phone: string | null
     address: string | null
     status: 'active' | 'inactive'
+}
+export interface StaffListParams {
+    page: number
+    limit: number
+    search?: string
+    status?: 'active' | 'inactive'
 }

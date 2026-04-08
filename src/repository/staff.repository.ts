@@ -2,6 +2,7 @@ import type { ResultSetHeader, RowDataPacket } from 'mysql2'
 import pool from '../db/mysql.js'
 import type { Staff, CreateStaffData, UpdateProfileData } from '../types/staff.types.js'
 
+
 export class StaffRepository {
 
     async countStaff(): Promise<number> {
@@ -28,13 +29,20 @@ export class StaffRepository {
     }
     async findAuthByUsername(username: string): Promise<Staff | null> {
         const [rows] = await pool.promise().query<Staff[]>(
-            `SELECT id, username, first_name, last_name, email, password_hash, phone, address, status, created_at, updated_at FROM staff WHERE username = ? LIMIT 1`,
+            `SELECT id, username, first_name, last_name, email, password_hash, phone, address, avatar,status, created_at, updated_at FROM staff WHERE username = ? LIMIT 1`,
             [username]
         )
         return rows[0] ?? null
 
     }
+    async findAuthById(id: number): Promise<Staff | null> {
+        const [rows] = await pool.promise().query<Staff[]>(
+            `SELECT id, username, first_name, last_name, email, password_hash, phone, address, avatar,status, created_at, updated_at FROM staff WHERE id = ? LIMIT 1`,
+            [id]
+        )
+        return rows[0] ?? null
 
+    }
     async findByEmail(email: string): Promise<Staff | null> {
         const [rows] = await pool.promise().query<Staff[]>(
             'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM staff WHERE email = ? LIMIT 1',
@@ -63,8 +71,8 @@ export class StaffRepository {
         }
 
         const [result] = await pool.promise().query<ResultSetHeader>(
-            'INSERT INTO staff (username, first_name, last_name, email, password_hash) VALUES (?, ?, ?, ?, ?)',
-            [data.username, data.first_name, data.last_name, data.email, data.password_hash]
+            'INSERT INTO staff (username, first_name, last_name, email, password_hash, status) VALUES (?, ?, ?, ?, ?, ?)',
+            [data.username, data.first_name, data.last_name, data.email, data.password_hash, data.status]
         )
         return result.insertId
     }
@@ -116,5 +124,13 @@ export class StaffRepository {
             [passwordHash, id]
         )
         return result.affectedRows > 0
+    }   
+    async updateStatus(id: number, status: 'active' | 'inactive'): Promise<boolean> {
+        const [result] = await pool.promise().query<ResultSetHeader>(
+            `UPDATE staff SET status = ? WHERE id = ?`,
+            [status, id]
+        )
+        return result.affectedRows > 0
     }
+
 }
