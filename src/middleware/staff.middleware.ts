@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import "dotenv/config";
+
 export function initStaffGuard(req: Request, res: Response, next: NextFunction) {
     if(process.env.ALLOW_INIT_STAFF !== 'true') {
         return res.status(403).json({

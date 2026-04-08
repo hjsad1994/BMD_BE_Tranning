@@ -17,13 +17,23 @@ interface Staff extends RowDataPacket {
 }
 
 interface CreateAdminData {
-  username: string
-  first_name: string
-  last_name: string
-  email: string
-  password_hash: string
+    username: string
+    first_name: string
+    last_name: string
+    email: string
+    password_hash: string
 }
+interface UpdateProfileData {
+    first_name?: string,
+    last_name?: string,
+    email?: string,
+    phone?: string,
+    address?: string,
+    avatar?: string
+}
+
 export class StaffRepository {
+
     async countStaff(): Promise<number> {
         const [rows] = await pool.promise().query<RowDataPacket[]>(
             'SELECT COUNT(*) AS total FROM staff'
@@ -79,4 +89,51 @@ export class StaffRepository {
         )
         return result.insertId
     }
+    async updateProfile(id: number, data: UpdateProfileData): Promise<boolean> {
+        const fields: string[] = []
+        const values: unknown[] = []
+        if (data.email !== undefined) {
+            fields.push('email = ?')
+            values.push(data.email)
+        }
+        if (data.first_name !== undefined) {
+            fields.push('first_name = ?')
+            values.push(data.first_name)
+        }
+        if (data.last_name !== undefined) {
+            fields.push('last_name = ?')
+            values.push(data.last_name)
+        }
+        if (data.phone !== undefined) {
+            fields.push('phone = ?')
+            values.push(data.phone)
+        }
+        if (data.address !== undefined) {
+            fields.push('address = ?')
+            values.push(data.address)
+        }
+        if (data.avatar !== undefined) {
+            fields.push('avatar = ?')
+            values.push(data.avatar)
+        }
+        if (fields.length === 0) {
+            return false
+        }
+        values.push(id)
+
+        const [result] = await pool.promise().query<ResultSetHeader>(
+            `UPDATE staff SET ${fields.join(', ')} WHERE id = ?`,
+            values
+          )
+        return result.affectedRows > 0
+    }
+    async updatePassowrd(id: number, passwordHash: string): Promise<boolean> {
+        const [result] = await pool.promise().query<ResultSetHeader> (
+            `UPDATE staff SET passowrd_hash = ? WHERE id = ?`,
+            [passwordHash, id]
+        )
+        return result.affectedRows > 0
+    }
+
+
 }

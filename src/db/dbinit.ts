@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS staff (
     password_hash VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
     address VARCHAR(255),
+    avatar VARCHAR(255),
     status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -26,6 +27,7 @@ CREATE TABLE IF NOT EXISTS customer (
     password_hash VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
     address VARCHAR(255),
+    avatar VARCHAR(255),
     status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
