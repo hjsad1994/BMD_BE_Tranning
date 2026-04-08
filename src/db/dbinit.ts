@@ -87,7 +87,21 @@ CREATE TABLE IF NOT EXISTS order_items (
     CONSTRAINT fk_order_items_product FOREIGN KEY (product_id) REFERENCES products(id)
 )
 `;
-
+const createOrderStatusHistoryTableSql = `
+CREATE TABLE IF NOT EXISTS order_status_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    old_status ENUM('pending', 'confirmed', 'shipping', 'completed', 'cancelled'),
+    new_status ENUM('pending', 'confirmed', 'shipping', 'completed', 'cancelled') NOT NULL,
+    changed_by_staff_id INT NULL,
+    note VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_order_status_history_order 
+        FOREIGN KEY (order_id) REFERENCES orders(id),
+    CONSTRAINT fk_order_status_history_staff 
+        FOREIGN KEY (changed_by_staff_id) REFERENCES staff(id)
+)
+`;
 
 const initDatabase = (): void => {
     console.log("Connected to database");

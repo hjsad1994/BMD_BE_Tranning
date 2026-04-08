@@ -87,10 +87,10 @@ router.post('/init-staff', initStaffGuard, staffController.initStaff.bind(staffC
  *                 example: admin@example.com
  *               phone:
  *                 type: string
- *                 example: "0901234567"
+ *                 example: "0778946513"
  *               address:
  *                 type: string
- *                 example: "123 Main St"
+ *                 example: "51 Duong A , TPHCM"
  *               avatar:
  *                 type: string
  *                 example: "https://example.com/avatar.png"

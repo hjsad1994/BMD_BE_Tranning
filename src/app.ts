@@ -1,15 +1,10 @@
 import express from "express";
 import swaggerUi from 'swagger-ui-express'
 import swaggerJSDoc from "swagger-jsdoc";
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 
 import initDatabase from "./db/dbinit.js";
 import staffRoutes from './routes/staff.routes.js'
 import authRoutes from './routes/auth.routes.js'
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const app = express();
 
@@ -38,7 +33,7 @@ const swaggerSpec = swaggerJSDoc({
     },
     security: [],
   },
-  apis: [join(__dirname, "./routes/**/*.js"), join(__dirname, "./routes/**/*.ts")],
+  apis: ["src/routes/**/*.ts"],
 });
 
 app.get('/', (_req, res) => {
