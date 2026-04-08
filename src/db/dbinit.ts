@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
-    product_name, VARCHAR(255) NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
     product_image VARCHAR(500),
     quantity INT NOT NULL,
     price DECIMAL(15,2) NOT NULL,

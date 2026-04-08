@@ -1,6 +1,6 @@
 import type { ResultSetHeader, RowDataPacket } from 'mysql2'
 import pool from '../db/mysql.js'
-import type { Staff, CreateStaffData, UpdateProfileData } from '../types/staff.types.js'
+import type { Staff, StaffAuth, CreateStaffData, UpdateProfileData } from '../types/staff.types.js'
 
 
 export class StaffRepository {
@@ -27,16 +27,16 @@ export class StaffRepository {
         )
         return rows[0] ?? null
     }
-    async findAuthByUsername(username: string): Promise<Staff | null> {
-        const [rows] = await pool.promise().query<Staff[]>(
+    async findAuthByUsername(username: string): Promise<StaffAuth | null> {
+        const [rows] = await pool.promise().query<StaffAuth[]>(
             `SELECT id, username, first_name, last_name, email, password_hash, phone, address, avatar,status, created_at, updated_at FROM staff WHERE username = ? LIMIT 1`,
             [username]
         )
         return rows[0] ?? null
 
     }
-    async findAuthById(id: number): Promise<Staff | null> {
-        const [rows] = await pool.promise().query<Staff[]>(
+    async findAuthById(id: number): Promise<StaffAuth | null> {
+        const [rows] = await pool.promise().query<StaffAuth[]>(
             `SELECT id, username, first_name, last_name, email, password_hash, phone, address, avatar,status, created_at, updated_at FROM staff WHERE id = ? LIMIT 1`,
             [id]
         )

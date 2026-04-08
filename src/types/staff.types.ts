@@ -6,7 +6,7 @@ export interface Staff extends RowDataPacket {
     first_name: string
     last_name: string
     email: string
-    password_hash: string
+    password_hash?: string
     phone: string | null
     address: string | null
     avatar: string | null
@@ -60,4 +60,19 @@ export interface StaffListParams {
     limit: number
     search?: string
     status?: 'active' | 'inactive'
+}
+
+export interface StaffAuth extends RowDataPacket {
+    id: number
+    username: string
+    first_name: string
+    last_name: string
+    email: string
+    password_hash: string
+    phone: string | null
+    address: string | null
+    avatar: string | null
+    status: 'active' | 'inactive'
+    created_at: Date
+    updated_at: Date
 }

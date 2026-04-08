@@ -104,9 +104,10 @@ router.post('/init-staff', initStaffGuard, staffController.initStaff.bind(staffC
  *       500:
  *         description: Internal server error
  */
+router.get('/profile', authenticate, requireStaff, staffController.getProfile.bind(staffController))
 router.put('/profile', authenticate, requireStaff, staffController.updateProfile.bind(staffController))
 // router.get('/id', authenticate , requireStaff, staffController.getStaff)
-router.get('/', authenticate, requireStaff, staffController.getAllStaff.bind(staffController))
+router.get('/', authenticate, requireStaff, staffController.getAllStaffProfile.bind(staffController))
 router.put('/profile/change-password', authenticate, requireStaff, staffController.changePassword.bind(staffController))
 router.put('/:id/reset-password', authenticate, requireStaff, staffController.resetPassword.bind(staffController))
 router.patch('/:id/status', authenticate, requireStaff, staffController.updateStatus.bind(staffController))

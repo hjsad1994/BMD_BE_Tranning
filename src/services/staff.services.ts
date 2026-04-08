@@ -78,7 +78,7 @@ export class StaffServices {
         if(!staff) {
             throw new Error('staff not found')
         }
-        const isMatch = await bcrypt.compare(oldPassword, staff.password_hash) 
+        const isMatch = await bcrypt.compare(oldPassword, staff.password_hash)
         if(!isMatch) {
             throw new Error('Old password is incorrect')
         }
@@ -96,8 +96,15 @@ export class StaffServices {
         const passwordHash = await bcrypt.hash(newPassword, 10) 
         return this.staffRepository.updatePassword(id ,passwordHash)
     }
-    async getAllStaff() {
+    async getAllStaffProfile() {
         return await this.staffRepository.findAll()
+    }
+    async getProfileStaff(id: number) {
+        const staff = await this.staffRepository.findById(id)
+        if (!staff) {
+            throw new Error('Staff not found')
+        }
+        return staff
     }
 }
 

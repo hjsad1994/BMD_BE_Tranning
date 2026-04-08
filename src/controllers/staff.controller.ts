@@ -73,9 +73,9 @@ export class StaffController {
             })
         }
     }
-    async getAllStaff(req: Request, res: Response) {
+    async getAllStaffProfile(req: Request, res: Response) {
         try  {
-            const result = await staffService.getAllStaff()
+            const result = await staffService.getAllStaffProfile()
             return res.status(200).json({
                 success: true,
                 data: result,
@@ -149,6 +149,22 @@ export class StaffController {
             return res.status(400).json({
                 success: false,
                 message: error instanceof Error ? error.message : 'Reset password failed'
+            })
+        }
+    }
+    async getProfile(req: Request, res: Response) {
+        try {
+            const staffId = req.user!.id
+            const staff = await staffService.getProfileStaff(staffId)
+            return res.status(200).json({
+                success: true,
+                data: staff,
+                message: 'Get profile successfully'
+            })
+        } catch(error) {
+            return res.status(500).json({
+                success: false,
+                message: error instanceof Error ? error.message : 'Server error'
             })
         }
     }
