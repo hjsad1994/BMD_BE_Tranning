@@ -26,6 +26,14 @@ export class StaffRepository {
         )
         return rows[0] ?? null
     }
+    async findAuthByUsername(username: string): Promise<Staff | null> {
+        const [rows] = await pool.promise().query<Staff[]>(
+            `SELECT id, username, first_name, last_name, email, password_hash, phone, address, status, created_at, updated_at FROM staff WHERE username = ? LIMIT 1`,
+            [username]
+        )
+        return rows[0] ?? null
+
+    }
 
     async findByEmail(email: string): Promise<Staff | null> {
         const [rows] = await pool.promise().query<Staff[]>(

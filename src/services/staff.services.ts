@@ -53,3 +53,4 @@ export class StaffServices {
         return this.staffRepository.updateProfile(id, data)
     }
 }
+

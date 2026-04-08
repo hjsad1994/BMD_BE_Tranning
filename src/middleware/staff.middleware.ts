@@ -15,3 +15,16 @@ export function initStaffGuard(req: Request, res: Response, next: NextFunction) 
     }
     next();
 }
+export function requireStaff(req: Request, res: Response, next: NextFunction) {
+    if(!req.user) {
+        return res.status(401).json({
+            message: 'unauthorized'
+        })
+    }
+    if(req.user.accountType !== 'staff') {
+        return res.status(403).json({
+            message: 'Forbidden staff only'
+        })
+    }
+    next()
+}

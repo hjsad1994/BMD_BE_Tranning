@@ -25,18 +25,12 @@ export class StaffController {
     }
     async updateProfile(req: Request, res: Response) {
         try {
-            const staffId = Number(req.params.id) 
+            const staffId = req.user!.id
             const data = req.body
             // check body is empty
             if(!data || Object.keys(data).length === 0 ) {
                 return res.status(400).json({
                     message: 'Request body is empty'
-                })
-            }
-            // check staff id 
-            if(Number.isNaN(staffId)) {
-                return res.status(400).json({
-                    message: 'invalid staff id'
                 })
             }
             const result = await staffService.updateProfile(staffId, data)
