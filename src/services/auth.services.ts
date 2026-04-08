@@ -51,4 +51,9 @@ export class AuthService {
             }
           }
     }
+    async logout () {
+        return {
+            message: 'logout successfully'
+        }
+    }
 }

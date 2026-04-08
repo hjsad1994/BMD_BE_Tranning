@@ -79,6 +79,8 @@ CREATE TABLE IF NOT EXISTS order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
+    product_name, VARCHAR(255) NOT NULL,
+    product_image VARCHAR(500),
     quantity INT NOT NULL,
     price DECIMAL(15,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -153,7 +155,13 @@ const initDatabase = (): void => {
         }
         console.log("order items table ready");
     })
-
+    connection.query(createOrderStatusHistoryTableSql, (orderItemError) => {
+        if (orderItemError) {
+            console.log("Create order_items table failed", orderItemError.message);
+            return;
+        }
+        console.log("order history table ready");
+    })
     // connection.query(createCustomerTableSql, (staffError) => {
     //     if (staffError) {
     //         console.log("Create staff table failed", staffError.message);

@@ -49,4 +49,6 @@ const authController = new AuthController()
  */
 router.post('/login', authController.login.bind(authController))
 
+
+router.post('/lougout', authController.logout.bind(authController))
 export default router
