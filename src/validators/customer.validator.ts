@@ -27,3 +27,24 @@ export const CreateCustomerSchema = z.object({
 })
 
 export type CreateCustomerInput = z.infer<typeof CreateCustomerSchema>
+
+// PUT /api/admin/customers/:id
+export const UpdateCustomerSchema = z.object({
+    first_name: z.string().trim().min(1, 'First name must not be empty').optional(),
+    last_name:  z.string().trim().min(1, 'Last name must not be empty').optional(),
+    email:      z.string().email({ message: 'Invalid email format' }).optional(),
+    phone:      z.string().trim().regex(/^\+?[0-9]{7,15}$/, 'Invalid phone number').optional(),
+    address:    z.string().trim().min(1, 'Address must not be empty').optional(),
+    avatar:     z.string().url('Avatar must be a valid URL').optional(),
+})
+
+export type UpdateCustomerInput = z.infer<typeof UpdateCustomerSchema>
+
+// PATCH /api/admin/customers/:id/status
+export const UpdateCustomerStatusSchema = z.object({
+    status: z.enum(['active', 'inactive'], {
+        message: "Status must be 'active' or 'inactive'",
+    }),
+})
+
+export type UpdateCustomerStatusInput = z.infer<typeof UpdateCustomerStatusSchema>

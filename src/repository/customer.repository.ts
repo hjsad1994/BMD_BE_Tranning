@@ -1,27 +1,20 @@
-
 import type { ResultSetHeader, RowDataPacket } from 'mysql2'
 import pool from '../db/mysql.js'
-import type { CreateCustomerData } from '../types/customer.types.js'
-
-interface Customer extends RowDataPacket {
-    id: number
-    username: string
-    first_name: string
-    last_name: string
-    email: string
-    password_hash: string
-    phone: string | null
-    address: string | null
-    status: 'active' | 'inactive'
-    created_at: Date
-    updated_at: Date
-}
-
+import type { Customer, CreateCustomerData, UpdateCustomerData } from '../types/customer.types.js'
 
 export class CustomerRepository {
+
     async findById(id: number): Promise<Customer | null> {
         const [rows] = await pool.promise().query<Customer[]>(
-            'SELECT id, username, first_name, last_name, email, phone, address, status, created_at, updated_at FROM customer WHERE id = ? LIMIT 1',
+            'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM customer WHERE id = ? AND deleted_at IS NULL LIMIT 1',
+            [id]
+        )
+        return rows[0] ?? null
+    }
+
+    async findDeletedById(id: number): Promise<Customer | null> {
+        const [rows] = await pool.promise().query<Customer[]>(
+            'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM customer WHERE id = ? AND deleted_at IS NOT NULL LIMIT 1',
             [id]
         )
         return rows[0] ?? null
@@ -29,13 +22,14 @@ export class CustomerRepository {
 
     async findAll(): Promise<Customer[]> {
         const [rows] = await pool.promise().query<Customer[]>(
-            'SELECT id, username, first_name, last_name, email, phone, address, status, created_at, updated_at FROM customer'
+            'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM customer WHERE deleted_at IS NULL ORDER BY created_at DESC'
         )
         return rows
     }
+
     async findByEmail(email: string): Promise<Customer | null> {
         const [rows] = await pool.promise().query<Customer[]>(
-            'SELECT id FROM customer WHERE email = ? LIMIT 1',
+            'SELECT id FROM customer WHERE email = ? AND deleted_at IS NULL LIMIT 1',
             [email]
         )
         return rows[0] ?? null
@@ -43,7 +37,15 @@ export class CustomerRepository {
 
     async findByUsername(username: string): Promise<Customer | null> {
         const [rows] = await pool.promise().query<Customer[]>(
-            'SELECT id FROM customer WHERE username = ? LIMIT 1',
+            'SELECT id FROM customer WHERE username = ? AND deleted_at IS NULL LIMIT 1',
+            [username]
+        )
+        return rows[0] ?? null
+    }
+
+    async findAuthByUsername(username: string): Promise<Customer | null> {
+        const [rows] = await pool.promise().query<Customer[]>(
+            'SELECT id, username, first_name, last_name, email, password_hash, phone, address, avatar, status FROM customer WHERE username = ? AND deleted_at IS NULL LIMIT 1',
             [username]
         )
         return rows[0] ?? null
@@ -66,5 +68,68 @@ export class CustomerRepository {
             [data.username, data.first_name, data.last_name, data.email, data.password, data.status]
         )
         return result.insertId
+    }
+
+    async updateCustomer(id: number, data: UpdateCustomerData): Promise<boolean> {
+        const fields: string[] = []
+        const values: unknown[] = []
+
+        if (data.first_name !== undefined) { 
+            fields.push('first_name = ?'); 
+            values.push(data.first_name) 
+        }
+        if (data.last_name  !== undefined) { 
+            fields.push('last_name = ?');  
+            values.push(data.last_name)  
+        }
+        if (data.email      !== undefined) { 
+            fields.push('email = ?');      
+            values.push(data.email)      
+        }
+        if (data.phone      !== undefined) { 
+            fields.push('phone = ?');      
+            values.push(data.phone)      
+        }
+        if (data.address    !== undefined) { 
+            fields.push('address = ?');    
+            values.push(data.address)    
+        }
+        if (data.avatar     !== undefined) { 
+            fields.push('avatar = ?');     
+            values.push(data.avatar)     
+        }
+
+        if (fields.length === 0) return false
+
+        values.push(id)
+        const [result] = await pool.promise().query<ResultSetHeader>(
+            `UPDATE customer SET ${fields.join(', ')} WHERE id = ? AND deleted_at IS NULL`,
+            values
+        )
+        return result.affectedRows > 0
+    }
+
+    async updateStatus(id: number, status: 'active' | 'inactive'): Promise<boolean> {
+        const [result] = await pool.promise().query<ResultSetHeader>(
+            'UPDATE customer SET status = ? WHERE id = ? AND deleted_at IS NULL',
+            [status, id]
+        )
+        return result.affectedRows > 0
+    }
+
+    async deleteCustomer(id: number): Promise<boolean> {
+        const [result] = await pool.promise().query<ResultSetHeader>(
+            'UPDATE customer SET deleted_at = NOW() WHERE id = ? AND deleted_at IS NULL',
+            [id]
+        )
+        return result.affectedRows > 0
+    }
+
+    async restoreCustomer(id: number): Promise<boolean> {
+        const [result] = await pool.promise().query<ResultSetHeader>(
+            'UPDATE customer SET deleted_at = NULL WHERE id = ? AND deleted_at IS NOT NULL',
+            [id]
+        )
+        return result.affectedRows > 0
     }
 }

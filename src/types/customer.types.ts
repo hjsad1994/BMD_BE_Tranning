@@ -1,6 +1,5 @@
 import type { RowDataPacket } from 'mysql2'
 
-
 export interface Customer extends RowDataPacket {
     id: number
     username: string
@@ -14,9 +13,8 @@ export interface Customer extends RowDataPacket {
     status: 'active' | 'inactive'
     created_at: Date
     updated_at: Date
-    delete_at: Date | null
+    deleted_at: Date | null
 }
-
 
 export interface CreateCustomerData {
     username: string
@@ -24,5 +22,14 @@ export interface CreateCustomerData {
     last_name: string
     email: string
     password: string
-    status: 'active',
+    status: 'active'
+}
+
+export interface UpdateCustomerData {
+    first_name?: string
+    last_name?: string
+    email?: string
+    phone?: string
+    address?: string
+    avatar?: string
 }

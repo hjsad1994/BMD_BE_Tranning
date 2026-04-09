@@ -7,6 +7,7 @@ import staffRoutes from './routes/staff.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import categoryRoutes from './routes/category.routes.js'
 import productRoutes from './routes/product.routes.js'
+import customerRoutes from './routes/customer.routes.js'
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 app.use('/api/admin', staffRoutes)
 app.use('/api/admin/categories', categoryRoutes)
 app.use('/api/admin/products', productRoutes)
+app.use('/api/admin/customers', customerRoutes)
 app.use('/api/auth', authRoutes)
 
 export default app;
