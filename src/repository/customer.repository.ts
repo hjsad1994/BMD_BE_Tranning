@@ -63,7 +63,7 @@ export class CustomerRepository {
 
         const [result] = await pool.promise().query<ResultSetHeader>(
             'INSERT INTO customer (username, first_name, last_name, email, password_hash, status) VALUES (?, ?, ?, ?, ?, ?)',
-            [data.username, data.first_name, data.last_name, data.email, data.password_hash, data.status]
+            [data.username, data.first_name, data.last_name, data.email, data.password, data.status]
         )
         return result.insertId
     }

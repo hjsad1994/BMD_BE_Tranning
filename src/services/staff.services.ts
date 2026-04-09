@@ -2,13 +2,6 @@ import bcrypt from 'bcrypt'
 import { StaffRepository } from '../repository/staff.repository.js'
 import type { InitStaffData, UpdateProfileData } from '../types/staff.types.js'
 
-
-type StaffListParams = {
-    page: number
-    limit: number
-    search?: string
-    status?: 'active' | 'inactive'
-}
 export class StaffServices {
     private staffRepository = new StaffRepository()
 
