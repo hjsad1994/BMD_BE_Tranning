@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import "dotenv/config";
+import { StaffRepository } from "../repository/staff.repository.js";
 
 export function initStaffGuard(req: Request, res: Response, next: NextFunction) {
     if(process.env.ALLOW_INIT_STAFF !== 'true') {
@@ -15,11 +16,16 @@ export function initStaffGuard(req: Request, res: Response, next: NextFunction) 
     }
     next();
 }
-export function requireStaff(req: Request, res: Response, next: NextFunction) {
+export async function requireStaff(req: Request, res: Response, next: NextFunction) {
     if(!req.user) {
         return res.status(401).json({
             message: 'unauthorized'
         })
+    }
+    const staffRepo = new StaffRepository()
+    const staff = await staffRepo.findById(req.user.id)
+    if (!staff || staff.status !== 'active') {
+        return res.status(403).json({ message: 'Account is inactive' })
     }
     if(req.user.accountType !== 'staff') {
         return res.status(403).json({

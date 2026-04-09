@@ -13,6 +13,7 @@ export interface Staff extends RowDataPacket {
     status: 'active' | 'inactive'
     created_at: Date
     updated_at: Date
+    delete_at: Date | null
 }
 
 export interface CreateStaffData {
@@ -76,3 +77,4 @@ export interface StaffAuth extends RowDataPacket {
     created_at: Date
     updated_at: Date
 }
+

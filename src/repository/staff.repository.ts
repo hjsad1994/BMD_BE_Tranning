@@ -132,5 +132,11 @@ export class StaffRepository {
         )
         return result.affectedRows > 0
     }
+    // async softDelete(id: number): Promise<boolean> {
+    //     const [result] = await pool.promise().query<ResultSetHeader> (
+    //         'UPDATE staff SET deleted_at = NOW(), status = ? WHERE id = ? AND deleted_at IS NULL',            
+    //         ['inactive', id]
+    //     )
+    // }
 
 }

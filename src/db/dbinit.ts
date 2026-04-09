@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS staff (
     avatar VARCHAR(255),
     status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL DEFAULT NULL
+
 )
 `;
 
@@ -30,7 +32,8 @@ CREATE TABLE IF NOT EXISTS customer (
     avatar VARCHAR(255),
     status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL DEFAULT NULL
 )
 `;
 
@@ -41,7 +44,8 @@ CREATE TABLE IF NOT EXISTS categories (
     description TEXT,
     status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL DEFAULT NULL
 )
 `;
 
@@ -57,7 +61,8 @@ CREATE TABLE IF NOT EXISTS products (
     status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_products_category FOREIGN KEY (category_id) REFERENCES categories(id)
+    CONSTRAINT fk_products_category FOREIGN KEY (category_id) REFERENCES categories(id),
+    deleted_at TIMESTAMP NULL DEFAULT NULL
 )
 `;
 
@@ -98,10 +103,8 @@ CREATE TABLE IF NOT EXISTS order_status_history (
     changed_by_staff_id INT NULL,
     note VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_order_status_history_order 
-        FOREIGN KEY (order_id) REFERENCES orders(id),
-    CONSTRAINT fk_order_status_history_staff 
-        FOREIGN KEY (changed_by_staff_id) REFERENCES staff(id)
+    CONSTRAINT fk_order_status_history_order FOREIGN KEY (order_id) REFERENCES orders(id),
+    CONSTRAINT fk_order_status_history_staff FOREIGN KEY (changed_by_staff_id) REFERENCES staff(id)
 )
 `;
 

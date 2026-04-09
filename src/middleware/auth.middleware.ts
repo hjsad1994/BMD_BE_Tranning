@@ -1,6 +1,9 @@
+import { StaffRepository } from './../repository/staff.repository.js';
 import type {Request, Response, NextFunction} from 'express'
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
+
+const staffRepository = new StaffRepository()
 export function authenticate(req: Request, res: Response, next: NextFunction) {
     try {
         const authHeader = req.headers.authorization
@@ -27,7 +30,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
             email: string
             accountType: 'staff' | 'user'
           }
-        
+
         req.user = {
             id: decoded.id,
             username: decoded.username,

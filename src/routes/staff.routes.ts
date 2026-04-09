@@ -15,7 +15,7 @@ const staffController = new StaffController()
  *       - Staff
  *     parameters:
  *       - in: header
- *         name: x-init-staff-secret
+ *         name: x-init-secret
  *         required: true
  *         schema:
  *           type: string
@@ -28,11 +28,15 @@ const staffController = new StaffController()
  *           schema:
  *             type: object
  *             required:
+ *               - username
  *               - email
  *               - password
  *               - first_name
  *               - last_name
  *             properties:
+ *               username:
+ *                 type: string
+ *                 example: admin
  *               first_name:
  *                 type: string
  *                 example: Tai
@@ -48,15 +52,35 @@ const staffController = new StaffController()
  *                 example: Aa@123456
  *     responses:
  *       201:
- *         description: Staff account created successfully
+ *         description: Init admin account suscessfully
  *       400:
- *         description: Invalid data or staff account already exists
+ *         description: Missing required fields or Admin account already initialized
  *       403:
- *         description: Init staff is disabled
- *       500:
- *         description: Internal server error
+ *         description: Init staff is disable / Forbidden
  */
 router.post('/init-staff', initStaffGuard, staffController.initStaff.bind(staffController))
+
+/**
+ * @openapi
+ * /api/admin/profile:
+ *   get:
+ *     summary: Get authenticated staff profile
+ *     description: Returns the profile of the currently authenticated staff member.
+ *     tags:
+ *       - Staff
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Get profile successfully
+ *       401:
+ *         description: unauthorized / Token missing / Invalid or expired token
+ *       403:
+ *         description: Account is inactive / Forbidden staff only
+ *       500:
+ *         description: Staff not found / Server error
+ */
+router.get('/profile', authenticate, requireStaff, staffController.getProfile.bind(staffController))
 
 /**
  * @openapi
@@ -96,20 +120,169 @@ router.post('/init-staff', initStaffGuard, staffController.initStaff.bind(staffC
  *                 example: "https://example.com/avatar.png"
  *     responses:
  *       200:
- *         description: Profile updated successfully
+ *         description: Profile update successfully
  *       400:
- *         description: Request body is empty
+ *         description: Request body is empty / Staff not found / No data to update / Email already in use by another staff member
  *       401:
- *         description: Unauthorized
- *       500:
- *         description: Internal server error
+ *         description: unauthorized / Token missing / Invalid or expired token
+ *       403:
+ *         description: Account is inactive / Forbidden staff only
  */
-router.get('/profile', authenticate, requireStaff, staffController.getProfile.bind(staffController))
+
+
 router.put('/profile', authenticate, requireStaff, staffController.updateProfile.bind(staffController))
-// router.get('/id', authenticate , requireStaff, staffController.getStaff)
+
+/**
+ * @openapi
+ * /api/admin:
+ *   get:
+ *     summary: Get all staff profiles
+ *     description: Returns a list of all staff member profiles.
+ *     tags:
+ *       - Staff
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Get admin list successfully
+ *       401:
+ *         description: unauthorized / Token missing / Invalid or expired token
+ *       403:
+ *         description: Account is inactive / Forbidden staff only
+ *       500:
+ *         description: server error
+ */
+
+
 router.get('/', authenticate, requireStaff, staffController.getAllStaffProfile.bind(staffController))
+
+/**
+ * @openapi
+ * /api/admin/profile/change-password:
+ *   put:
+ *     summary: Change password for authenticated staff
+ *     description: Allows the currently authenticated staff member to change their own password.
+ *     tags:
+ *       - Staff
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 example: Aa@123456
+ *               newPassword:
+ *                 type: string
+ *                 example: Bb@654321
+ *     responses:
+ *       200:
+ *         description: Password change successfully
+ *       400:
+ *         description: old password and new password are required / staff not found / Old password is incorrect
+ *       401:
+ *         description: unauthorized / Token missing / Invalid or expired token
+ *       403:
+ *         description: Account is inactive / Forbidden staff only
+ */
+
+
 router.put('/profile/change-password', authenticate, requireStaff, staffController.changePassword.bind(staffController))
+
+/**
+ * @openapi
+ * /api/admin/{id}/reset-password:
+ *   put:
+ *     summary: Reset password for a staff member by ID
+ *     description: Allows an authenticated staff member to reset the password of another staff member.
+ *     tags:
+ *       - Staff
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the staff member whose password will be reset
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newPassword
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 example: Bb@654321
+ *     responses:
+ *       200:
+ *         description: Reset password successfully
+ *       400:
+ *         description: Invalid staff id / new password are required / Staff not found
+ *       401:
+ *         description: unauthorized / Token missing / Invalid or expired token
+ *       403:
+ *         description: Account is inactive / Forbidden staff only
+ */
+
+
 router.put('/:id/reset-password', authenticate, requireStaff, staffController.resetPassword.bind(staffController))
+
+/**
+ * @openapi
+ * /api/admin/{id}/status:
+ *   patch:
+ *     summary: Update status of a staff member by ID
+ *     description: Allows an authenticated staff member to activate or deactivate another staff member.
+ *     tags:
+ *       - Staff
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the staff member whose status will be updated
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [active, inactive]
+ *                 example: inactive
+ *     responses:
+ *       200:
+ *         description: Update status successfully
+ *       400:
+ *         description: Invalid staff id / Status is required / Invalid status value / staff not found
+ *       401:
+ *         description: unauthorized / Token missing / Invalid or expired token
+ *       403:
+ *         description: Account is inactive / Forbidden staff only
+ */
+
+
 router.patch('/:id/status', authenticate, requireStaff, staffController.updateStatus.bind(staffController))
 
 export default router;
