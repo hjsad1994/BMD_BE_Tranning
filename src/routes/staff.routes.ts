@@ -5,6 +5,7 @@ import { authenticate } from '../middleware/auth.middleware.js'
 import { validate } from '../middleware/validate.middleware.js'
 import {
     InitStaffSchema,
+    CreateStaffSchema,
     UpdateProfileSchema,
     ChangePasswordSchema,
     ResetPasswordSchema,
@@ -164,6 +165,59 @@ router.put('/profile', authenticate, requireStaff, validate(UpdateProfileSchema)
  *         description: server error
  */
 router.get('/', authenticate, requireStaff, staffController.getAllStaffProfile.bind(staffController))
+
+/**
+ * @openapi
+ * /api/admin/staff:
+ *   post:
+ *     summary: Create a new staff account
+ *     description: Creates a new staff member account. Requires staff authentication.
+ *     tags:
+ *       - Staff
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - first_name
+ *               - last_name
+ *               - email
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: staff01
+ *               first_name:
+ *                 type: string
+ *                 example: Tai
+ *               last_name:
+ *                 type: string
+ *                 example: Tran
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: staff01@example.com
+ *               password:
+ *                 type: string
+ *                 example: Aa@123456
+ *     responses:
+ *       201:
+ *         description: Staff created successfully
+ *       400:
+ *         description: Staff with email/username already exists
+ *       401:
+ *         description: unauthorized / Token missing / Invalid or expired token
+ *       403:
+ *         description: Account is inactive / Forbidden staff only
+ *       422:
+ *         description: Validation failed
+ */
+router.post('/', authenticate, requireStaff, validate(CreateStaffSchema), staffController.createStaff.bind(staffController))
 
 /**
  * @openapi

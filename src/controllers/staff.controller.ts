@@ -22,7 +22,21 @@ export class StaffController {
             })
         }
     }
-
+    async createStaff(req: Request, res: Response) {
+        try {
+            const result = await staffService.createStaff(req.body)
+            return res.status(201).json({
+                success: true,
+                data: result,
+                message: 'Staff created successfully'
+            })
+        } catch (error) {
+            return res.status(400).json({
+                success: false,
+                message: error instanceof Error ? error.message : 'Create staff failed'
+            })
+        }
+    }
     async updateProfile(req: Request, res: Response) {
         try {
             const staffId = req.user!.id

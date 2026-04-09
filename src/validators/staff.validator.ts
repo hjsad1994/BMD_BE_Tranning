@@ -97,3 +97,27 @@ export const UpdateStatusSchema = z.object({
 })
 
 export type UpdateStatusInput = z.infer<typeof UpdateStatusSchema>
+
+// POST / (create new staff by admin)
+export const CreateStaffSchema = z.object({
+    username: z
+        .string()
+        .trim()
+        .min(3, 'Username must be at least 3 characters'),
+
+    first_name: z
+        .string()
+        .trim()
+        .min(1, 'First name is required'),
+
+    last_name: z
+        .string()
+        .trim()
+        .min(1, 'Last name is required'),
+
+    email: z.email({ message: 'Invalid email format' }),
+
+    password: passwordSchema,
+})
+
+export type CreateStaffInput = z.infer<typeof CreateStaffSchema>

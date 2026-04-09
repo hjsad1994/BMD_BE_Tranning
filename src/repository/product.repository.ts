@@ -1,6 +1,6 @@
 import type { ResultSetHeader, RowDataPacket } from 'mysql2'
 import pool from '../db/mysql.js'
-import type { Product, CreateProductData, UpdateProductData } from '../types/product.types.js'
+import type { Product, ProductWithCategoryRow, CreateProductData, UpdateProductData } from '../types/product.types.js'
 
 export class ProductRepository {
 
@@ -29,18 +29,41 @@ export class ProductRepository {
     }
         
 
-    async findAll(): Promise<Product[]> {
-        const [rows] = await pool.promise().query<Product[]>(
-            `SELECT id, category_id, name, description, price, stock, image_url, status, created_at, updated_at
-             FROM products WHERE deleted_at IS NULL ORDER BY created_at DESC`
+    async findAll(): Promise<ProductWithCategoryRow[]> {
+        const [rows] = await pool.promise().query<ProductWithCategoryRow[]>(
+            `SELECT
+                p.id, p.name, p.description, p.price, p.stock, p.image_url, p.status, p.created_at, p.updated_at,
+                c.id AS cat_id, c.name AS cat_name, c.description AS cat_description, c.status AS cat_status
+             FROM products p
+             LEFT JOIN categories c ON p.category_id = c.id AND c.deleted_at IS NULL
+             WHERE p.deleted_at IS NULL
+             ORDER BY p.created_at DESC`
         )
         return rows
     }
 
-    async findByCategoryId(categoryId: number): Promise<Product[]> {
-        const [rows] = await pool.promise().query<Product[]>(
-            `SELECT id, category_id, name, description, price, stock, image_url, status, created_at, updated_at
-             FROM products WHERE category_id = ? AND deleted_at IS NULL ORDER BY created_at DESC`,
+    async findWithCategoryById(id: number): Promise<ProductWithCategoryRow | null> {
+        const [rows] = await pool.promise().query<ProductWithCategoryRow[]>(
+            `SELECT
+                p.id, p.name, p.description, p.price, p.stock, p.image_url, p.status, p.created_at, p.updated_at,
+                c.id AS cat_id, c.name AS cat_name, c.description AS cat_description, c.status AS cat_status
+             FROM products p
+             LEFT JOIN categories c ON p.category_id = c.id AND c.deleted_at IS NULL
+             WHERE p.id = ? AND p.deleted_at IS NULL LIMIT 1`,
+            [id]
+        )
+        return rows[0] ?? null
+    }
+
+    async findByCategoryId(categoryId: number): Promise<ProductWithCategoryRow[]> {
+        const [rows] = await pool.promise().query<ProductWithCategoryRow[]>(
+            `SELECT
+                p.id, p.name, p.description, p.price, p.stock, p.image_url, p.status, p.created_at, p.updated_at,
+                c.id AS cat_id, c.name AS cat_name, c.description AS cat_description, c.status AS cat_status
+             FROM products p
+             LEFT JOIN categories c ON p.category_id = c.id AND c.deleted_at IS NULL
+             WHERE p.category_id = ? AND p.deleted_at IS NULL
+             ORDER BY p.created_at DESC`,
             [categoryId]
         )
         return rows

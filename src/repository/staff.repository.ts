@@ -76,7 +76,6 @@ export class StaffRepository {
         )
         return result.insertId
     }
-
     async updateProfile(id: number, data: UpdateProfileData): Promise<boolean> {
         const fields: string[] = []
         const values: unknown[] = []

@@ -1,21 +1,42 @@
 import { ProductRepository } from '../repository/product.repository.js'
 import { CategoryRepository } from '../repository/category.repository.js'
-import type { CreateProductData, UpdateProductData } from '../types/product.types.js'
+import type { CreateProductData, UpdateProductData, ProductWithCategoryRow, ProductResponse } from '../types/product.types.js'
 
 export class ProductServices {
     private productRepository = new ProductRepository()
     private categoryRepository = new CategoryRepository()
 
+    private formatProduct(row: ProductWithCategoryRow): ProductResponse {
+        return {
+            id: row.id,
+            name: row.name,
+            description: row.description,
+            price: row.price,
+            stock: row.stock,
+            image_url: row.image_url,
+            status: row.status,
+            created_at: row.created_at,
+            updated_at: row.updated_at,
+            category: row.cat_id !== null ? {
+                id: row.cat_id,
+                name: row.cat_name!,
+                description: row.cat_description,
+                status: row.cat_status!,
+            } : null,
+        }
+    }
+
     async getAllProducts() {
-        return await this.productRepository.findAll()
+        const rows = await this.productRepository.findAll()
+        return rows.map(row => this.formatProduct(row))
     }
 
     async getProductById(id: number) {
-        const product = await this.productRepository.findById(id)
-        if (!product) {
+        const row = await this.productRepository.findWithCategoryById(id)
+        if (!row) {
             throw new Error('Product not found')
         }
-        return product
+        return this.formatProduct(row)
     }
 
     async getProductsByCategory(categoryId: number) {
@@ -23,7 +44,8 @@ export class ProductServices {
         if (!category) {
             throw new Error('Category not found')
         }
-        return await this.productRepository.findByCategoryId(categoryId)
+        const rows = await this.productRepository.findByCategoryId(categoryId)
+        return rows.map(row => this.formatProduct(row))
     }
 
     async createProduct(data: CreateProductData) {

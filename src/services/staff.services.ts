@@ -25,6 +25,23 @@ export class StaffServices {
         })
         return { staffId, username, email }
     }
+    // create staff account 
+    async createStaff(data: InitStaffData) {
+        const { username, first_name, last_name, email, password } = data
+        if (!username || !first_name || !last_name || !email || !password) {
+            throw new Error('Missing required fields: username, first_name, last_name, email, password')
+        }
+        const passwordHash = await bcrypt.hash(password, 10)
+        const staffId = await this.staffRepository.createStaff({
+            username,
+            email,
+            first_name,
+            last_name,
+            password_hash: passwordHash,
+            status: 'active'
+        })
+        return { staffId, username, email }
+    }
     // update self profile
     async updateProfile(id: number, data: UpdateProfileData): Promise<boolean> {
         const staff = await this.staffRepository.findById(id)
