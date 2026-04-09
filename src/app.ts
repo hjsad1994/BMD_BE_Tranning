@@ -25,8 +25,9 @@ const swaggerSpec = swaggerJSDoc({
       description: "API documentation for BMD Training backend",
     },
     servers: [
-      { url: "http://103.72.56.203:3000", description: "Production" },
+      { url: "http://192.168.1.4:3000", description: "Production" },
       { url: "http://localhost:3000", description: "Local" },
+      // { url: "http://172.29.20.96:3000", description: "local public"}
     ],
     components: {
       securitySchemes: {

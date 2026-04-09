@@ -58,50 +58,50 @@ router.post('/login', authController.login.bind(authController))
  */
 router.post('/logout', authenticate, authController.logout.bind(authController))
 
-/**
- * @openapi
- * /api/auth/register:
- *   post:
- *     summary: Register a new customer account
- *     tags:
- *       - Auth
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - username
- *               - first_name
- *               - last_name
- *               - email
- *               - password
- *             properties:
- *               username:
- *                 type: string
- *                 example: user1
- *               first_name:
- *                 type: string
- *                 example: Tran
- *               last_name:
- *                 type: string
- *                 example: Tai
- *               email:
- *                 type: string
- *                 format: email
- *                 example: user1@example.com
- *               password:
- *                 type: string
- *                 example: Aa@123456
- *     responses:
- *       201:
- *         description: Register successfully
- *       400:
- *         description: Customer with email/username already exists
- *       422:
- *         description: Validation failed
- */
-router.post('/register', validate(CreateCustomerSchema), customerController.register.bind(customerController))
+// /**
+//  * @openapi
+//  * /api/auth/register:
+//  *   post:
+//  *     summary: Register a new customer account
+//  *     tags:
+//  *       - Auth
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - username
+//  *               - first_name
+//  *               - last_name
+//  *               - email
+//  *               - password
+//  *             properties:
+//  *               username:
+//  *                 type: string
+//  *                 example: user1
+//  *               first_name:
+//  *                 type: string
+//  *                 example: Tran
+//  *               last_name:
+//  *                 type: string
+//  *                 example: Tai
+//  *               email:
+//  *                 type: string
+//  *                 format: email
+//  *                 example: user1@example.com
+//  *               password:
+//  *                 type: string
+//  *                 example: Aa@123456
+//  *     responses:
+//  *       201:
+//  *         description: Register successfully
+//  *       400:
+//  *         description: Customer with email/username already exists
+//  *       422:
+//  *         description: Validation failed
+//  */
+// router.post('/register', validate(CreateCustomerSchema), customerController.register.bind(customerController))
 
 export default router

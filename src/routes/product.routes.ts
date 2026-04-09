@@ -78,7 +78,7 @@ router.get('/', authenticate, requireStaff, productController.getAllProducts.bin
 
 /**
  * @openapi
- * /api/admin/products/category/{categoryId}:
+ * /api/admin/products/category/{id}:
  *   get:
  *     summary: Get products by category
  *     description: Returns all products belonging to a specific category.
@@ -88,7 +88,7 @@ router.get('/', authenticate, requireStaff, productController.getAllProducts.bin
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: categoryId
+ *         name: id
  *         required: true
  *         schema:
  *           type: integer
@@ -104,7 +104,7 @@ router.get('/', authenticate, requireStaff, productController.getAllProducts.bin
  *       403:
  *         description: Account is inactive / Forbidden staff only
  */
-router.get('/category/:categoryId', authenticate, requireStaff, productController.getProductsByCategory.bind(productController))
+router.get('/category/:id', authenticate, requireStaff, productController.getProductsByCategory.bind(productController))
 
 /**
  * @openapi

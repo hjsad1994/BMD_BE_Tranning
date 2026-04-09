@@ -48,7 +48,7 @@ export class ProductController {
 
     async getProductsByCategory(req: Request, res: Response) {
         try {
-            const categoryId = Number(req.params.categoryId)
+            const categoryId = Number(req.params.id)
 
             if (!categoryId || Number.isNaN(categoryId)) {
                 return res.status(400).json({
