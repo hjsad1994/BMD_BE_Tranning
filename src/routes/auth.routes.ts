@@ -1,9 +1,13 @@
 import { Router } from 'express'
 import { AuthController } from '../controllers/auth.controller.js'
+import { CustomerController } from '../controllers/customer.controller.js'
 import { authenticate } from '../middleware/auth.middleware.js'
-const router = Router()
+import { validate } from '../middleware/validate.middleware.js'
+import { CreateCustomerSchema } from '../validators/customer.validator.js'
 
+const router = Router()
 const authController = new AuthController()
+const customerController = new CustomerController()
 
 /**
  * @openapi
@@ -38,10 +42,10 @@ router.post('/login', authController.login.bind(authController))
 
 /**
  * @openapi
- * /api/auth/lougout:
+ * /api/auth/logout:
  *   post:
- *     summary: Logout authenticated staff
- *     description: Logs out the currently authenticated staff member. Requires a valid Bearer token.
+ *     summary: Logout authenticated user
+ *     description: Logs out the currently authenticated user. Requires a valid Bearer token.
  *     tags:
  *       - Auth
  *     security:
@@ -52,6 +56,52 @@ router.post('/login', authController.login.bind(authController))
  *       401:
  *         description: unauthorized / Token missing / Invalid or expired token
  */
-router.post('/lougout', authenticate, authController.logout.bind(authController))
-router.post('/register')
+router.post('/logout', authenticate, authController.logout.bind(authController))
+
+/**
+ * @openapi
+ * /api/auth/register:
+ *   post:
+ *     summary: Register a new customer account
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - first_name
+ *               - last_name
+ *               - email
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: user1
+ *               first_name:
+ *                 type: string
+ *                 example: Tran
+ *               last_name:
+ *                 type: string
+ *                 example: Tai
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user1@example.com
+ *               password:
+ *                 type: string
+ *                 example: Aa@123456
+ *     responses:
+ *       201:
+ *         description: Register successfully
+ *       400:
+ *         description: Customer with email/username already exists
+ *       422:
+ *         description: Validation failed
+ */
+router.post('/register', validate(CreateCustomerSchema), customerController.register.bind(customerController))
+
 export default router

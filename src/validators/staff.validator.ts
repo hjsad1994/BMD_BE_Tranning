@@ -25,9 +25,7 @@ export const InitStaffSchema = z.object({
         .trim()
         .min(1, 'Last name is required'),
 
-    email: z
-        .string()
-        .email('Invalid email format'),
+    email: z.email({ message: 'Invalid email format' }),
 
     password: passwordSchema,
 })
@@ -50,7 +48,7 @@ export const UpdateProfileSchema = z.object({
 
     email: z
         .string()
-        .email('Invalid email format')
+        .email({ message: 'Invalid email format' })
         .optional(),
 
     phone: z

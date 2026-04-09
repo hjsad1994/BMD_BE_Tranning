@@ -1,21 +1,24 @@
-import { CustomerServices } from './../services/customer.services.js';
 import type { Request, Response } from 'express'
-import { CreateCustomerSchema } from '../validators/customer.validator.js'
-import z from 'zod'
+import { CustomerServices } from '../services/customer.services.js'
+
 const customerServices = new CustomerServices()
 
 export class CustomerController {
-    async createCustomer(req: Request, res: Response) {
-        if(!req.body || Object.keys(req.body).length === 0) {
-            return res.status(400).json({ 
-                message: 'Request body is empty' 
-            })       
-        }
-        const parsed = CreateCustomerSchema.safeParse(req.body)
-        if (!parsed.success) {
+    async register(req: Request, res: Response) {
+        try {
+            // valid use zod middleware
+            const result = await customerServices.createCustomer(req.body)
+
+            return res.status(201).json({
+                success: true,
+                data: result,
+                message: 'Register sucessfully'
+            })
+
+        } catch (error) {
             return res.status(400).json({
-                message: 'Validation failed',
-                errors: z.flattenError(parsed.error).fieldErrors
+                success: false,
+                message: error instanceof Error ? error.message : 'Register failed'
             })
         }
     }
