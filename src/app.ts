@@ -53,7 +53,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   },
 }));
 
-app.use('/api/admin', staffRoutes)
+app.use('/api/admin/staff', staffRoutes)
 app.use('/api/admin/categories', categoryRoutes)
 app.use('/api/admin/products', productRoutes)
 app.use('/api/admin/customers', customerRoutes)

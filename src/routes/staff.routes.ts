@@ -16,7 +16,7 @@ const staffController = new StaffController()
 
 /**
  * @openapi
- * /api/admin/init-staff:
+ * /api/admin/staff/init-staff:
  *   post:
  *     summary: Initialize the first staff account
  *     description: Creates the initial system staff account if no staff exists yet.
@@ -73,7 +73,7 @@ router.post('/init-staff', initStaffGuard, validate(InitStaffSchema), staffContr
 
 /**
  * @openapi
- * /api/admin/profile:
+ * /api/admin/staff/profile:
  *   get:
  *     summary: Get authenticated staff profile
  *     description: Returns the profile of the currently authenticated staff member.
@@ -95,7 +95,7 @@ router.get('/profile', authenticate, requireStaff, staffController.getProfile.bi
 
 /**
  * @openapi
- * /api/admin/profile:
+ * /api/admin/staff/profile:
  *   put:
  *     summary: Update authenticated staff profile
  *     description: Updates the profile of the currently authenticated staff member.
@@ -145,7 +145,7 @@ router.put('/profile', authenticate, requireStaff, validate(UpdateProfileSchema)
 
 /**
  * @openapi
- * /api/admin:
+ * /api/admin/staff:
  *   get:
  *     summary: Get all staff profiles
  *     description: Returns a list of all staff member profiles.
@@ -167,7 +167,7 @@ router.get('/', authenticate, requireStaff, staffController.getAllStaffProfile.b
 
 /**
  * @openapi
- * /api/admin/profile/change-password:
+ * /api/admin/staff/profile/change-password:
  *   put:
  *     summary: Change password for authenticated staff
  *     description: Allows the currently authenticated staff member to change their own password.
@@ -207,7 +207,7 @@ router.put('/profile/change-password', authenticate, requireStaff, validate(Chan
 
 /**
  * @openapi
- * /api/admin/{id}/reset-password:
+ * /api/admin/staff/{id}/reset-password:
  *   put:
  *     summary: Reset password for a staff member by ID
  *     description: Allows an authenticated staff member to reset the password of another staff member.
@@ -251,7 +251,7 @@ router.put('/:id/reset-password', authenticate, requireStaff, validate(ResetPass
 
 /**
  * @openapi
- * /api/admin/{id}/status:
+ * /api/admin/staff/{id}/status:
  *   patch:
  *     summary: Update status of a staff member by ID
  *     description: Allows an authenticated staff member to activate or deactivate another staff member.
