@@ -99,5 +99,12 @@ export class StaffServices {
         }
         return staff
     }
+    async getStaffById(id: number) {
+        const staff = await this.staffRepository.findById(id)
+        if (!staff) {
+            throw new Error('Staff not found')
+        }
+        return staff
+    }
 }
 

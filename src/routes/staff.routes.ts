@@ -167,6 +167,38 @@ router.get('/', authenticate, requireStaff, staffController.getAllStaffProfile.b
 
 /**
  * @openapi
+ * /api/admin/staff/{id}:
+ *   get:
+ *     summary: Get a staff member by ID
+ *     description: Returns the profile of a specific staff member by their ID.
+ *     tags:
+ *       - Staff
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the staff member
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Get staff successfully
+ *       400:
+ *         description: Invalid staff id
+ *       401:
+ *         description: unauthorized / Token missing / Invalid or expired token
+ *       403:
+ *         description: Account is inactive / Forbidden staff only
+ *       404:
+ *         description: Staff not found
+ */
+router.get('/:id', authenticate, requireStaff, staffController.getStaffById.bind(staffController))
+
+/**
+ * @openapi
  * /api/admin/staff/profile/change-password:
  *   put:
  *     summary: Change password for authenticated staff

@@ -160,4 +160,29 @@ export class StaffController {
             })
         }
     }
+
+    async getStaffById(req: Request, res: Response) {
+        try {
+            const id = Number(req.params.id)
+
+            if (!id || Number.isNaN(id)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid staff id'
+                })
+            }
+
+            const staff = await staffService.getStaffById(id)
+            return res.status(200).json({
+                success: true,
+                data: staff,
+                message: 'Get staff successfully'
+            })
+        } catch(error) {
+            return res.status(404).json({
+                success: false,
+                message: error instanceof Error ? error.message : 'Staff not found'
+            })
+        }
+    }
 }
