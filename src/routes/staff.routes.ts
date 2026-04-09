@@ -2,6 +2,15 @@ import { Router } from 'express'
 import { StaffController } from '../controllers/staff.controller.js'
 import { initStaffGuard, requireStaff } from '../middleware/staff.middleware.js'
 import { authenticate } from '../middleware/auth.middleware.js'
+import { validate } from '../middleware/validate.middleware.js'
+import {
+    InitStaffSchema,
+    UpdateProfileSchema,
+    ChangePasswordSchema,
+    ResetPasswordSchema,
+    UpdateStatusSchema,
+} from '../validators/staff.validator.js'
+
 const router = Router()
 const staffController = new StaffController()
 
@@ -57,8 +66,10 @@ const staffController = new StaffController()
  *         description: Missing required fields or Admin account already initialized
  *       403:
  *         description: Init staff is disable / Forbidden
+ *       422:
+ *         description: Validation failed
  */
-router.post('/init-staff', initStaffGuard, staffController.initStaff.bind(staffController))
+router.post('/init-staff', initStaffGuard, validate(InitStaffSchema), staffController.initStaff.bind(staffController))
 
 /**
  * @openapi
@@ -127,10 +138,10 @@ router.get('/profile', authenticate, requireStaff, staffController.getProfile.bi
  *         description: unauthorized / Token missing / Invalid or expired token
  *       403:
  *         description: Account is inactive / Forbidden staff only
+ *       422:
+ *         description: Validation failed
  */
-
-
-router.put('/profile', authenticate, requireStaff, staffController.updateProfile.bind(staffController))
+router.put('/profile', authenticate, requireStaff, validate(UpdateProfileSchema), staffController.updateProfile.bind(staffController))
 
 /**
  * @openapi
@@ -152,8 +163,6 @@ router.put('/profile', authenticate, requireStaff, staffController.updateProfile
  *       500:
  *         description: server error
  */
-
-
 router.get('/', authenticate, requireStaff, staffController.getAllStaffProfile.bind(staffController))
 
 /**
@@ -181,7 +190,7 @@ router.get('/', authenticate, requireStaff, staffController.getAllStaffProfile.b
  *                 example: Aa@123456
  *               newPassword:
  *                 type: string
- *                 example: Bb@654321
+ *                 example: Aa@1234567
  *     responses:
  *       200:
  *         description: Password change successfully
@@ -191,10 +200,10 @@ router.get('/', authenticate, requireStaff, staffController.getAllStaffProfile.b
  *         description: unauthorized / Token missing / Invalid or expired token
  *       403:
  *         description: Account is inactive / Forbidden staff only
+ *       422:
+ *         description: Validation failed
  */
-
-
-router.put('/profile/change-password', authenticate, requireStaff, staffController.changePassword.bind(staffController))
+router.put('/profile/change-password', authenticate, requireStaff, validate(ChangePasswordSchema), staffController.changePassword.bind(staffController))
 
 /**
  * @openapi
@@ -225,7 +234,7 @@ router.put('/profile/change-password', authenticate, requireStaff, staffControll
  *             properties:
  *               newPassword:
  *                 type: string
- *                 example: Bb@654321
+ *                 example: Aa@123456
  *     responses:
  *       200:
  *         description: Reset password successfully
@@ -235,10 +244,10 @@ router.put('/profile/change-password', authenticate, requireStaff, staffControll
  *         description: unauthorized / Token missing / Invalid or expired token
  *       403:
  *         description: Account is inactive / Forbidden staff only
+ *       422:
+ *         description: Validation failed
  */
-
-
-router.put('/:id/reset-password', authenticate, requireStaff, staffController.resetPassword.bind(staffController))
+router.put('/:id/reset-password', authenticate, requireStaff, validate(ResetPasswordSchema), staffController.resetPassword.bind(staffController))
 
 /**
  * @openapi
@@ -280,9 +289,9 @@ router.put('/:id/reset-password', authenticate, requireStaff, staffController.re
  *         description: unauthorized / Token missing / Invalid or expired token
  *       403:
  *         description: Account is inactive / Forbidden staff only
+ *       422:
+ *         description: Validation failed
  */
-
-
-router.patch('/:id/status', authenticate, requireStaff, staffController.updateStatus.bind(staffController))
+router.patch('/:id/status', authenticate, requireStaff, validate(UpdateStatusSchema), staffController.updateStatus.bind(staffController))
 
 export default router;

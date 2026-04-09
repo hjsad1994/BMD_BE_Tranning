@@ -11,7 +11,7 @@ export class StaffController {
                     message: 'Init staff disabled'
                 })
             }
-            const result = await staffService.initStaffAccount(req.body) 
+            const result = await staffService.initStaffAccount(req.body)
             return res.status(201).json({
                 message: 'Init admin account suscessfully',
                 data: result
@@ -22,16 +22,19 @@ export class StaffController {
             })
         }
     }
+
     async updateProfile(req: Request, res: Response) {
         try {
             const staffId = req.user!.id
             const data = req.body
-            // check body is empty
-            if(!data || Object.keys(data).length === 0 ) {
+
+            // valid use zod middleware
+            if (!data || Object.keys(data).length === 0) {
                 return res.status(400).json({
                     message: 'Request body is empty'
                 })
             }
+
             const result = await staffService.updateProfile(staffId, data)
             return res.status(200).json({
                 success: true,
@@ -45,22 +48,19 @@ export class StaffController {
             })
         }
     }
+
     async changePassword(req: Request, res: Response) {
         try {
             const staffId = req.user?.id
-            const {oldPassword , newPassword} = req.body
-            if(!staffId) {
+            const { oldPassword, newPassword } = req.body
+
+            if (!staffId) {
                 return res.status(401).json({
                     success: false,
                     message: 'unauthorized'
                 })
             }
-            if(!oldPassword || !newPassword) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'old password and new password are required'
-                })
-            }
+
             await staffService.changePassword(staffId, oldPassword, newPassword)
             return res.status(200).json({
                 success: true,
@@ -73,6 +73,7 @@ export class StaffController {
             })
         }
     }
+
     async getAllStaffProfile(req: Request, res: Response) {
         try  {
             const result = await staffService.getAllStaffProfile()
@@ -88,10 +89,10 @@ export class StaffController {
             })
         }
     }
+
     async updateStatus(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id) 
-            const {status} = req.body as { status: 'active' | 'inactive'}
+            const id = Number(req.params.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -99,24 +100,15 @@ export class StaffController {
                     message: 'Invalid staff id'
                 })
             }
-            if(!status) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Status is required'
-                })
-            }
-            if(!['active', 'inactive'].includes(status)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Invalid status value'                   
-                })
-            }
-            await staffService.updateStatus(id,status)
+
+            // valid use zod middleware
+            const { status } = req.body as { status: 'active' | 'inactive' }
+
+            await staffService.updateStatus(id, status)
             return res.status(200).json({
                 success: true,
                 message: 'Update status successfully'
             })
-
         } catch (error) {
             return res.status(400).json({
                 success: false,
@@ -124,22 +116,21 @@ export class StaffController {
             })
         }
     }
+
     async resetPassword(req: Request, res: Response) {
         try {
             const id = Number(req.params.id)
-            const {newPassword} = req.body
+
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
                     success: false,
                     message: 'Invalid staff id'
                 })
             }
-            if(!newPassword) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'new password are required'
-                })
-            }
+
+            // valid use zod middleware
+            const { newPassword } = req.body
+
             await staffService.resetPassword(id, newPassword)
             return res.status(200).json({
                 success: true,
@@ -152,6 +143,7 @@ export class StaffController {
             })
         }
     }
+
     async getProfile(req: Request, res: Response) {
         try {
             const staffId = req.user!.id

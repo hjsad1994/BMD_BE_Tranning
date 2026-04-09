@@ -53,5 +53,5 @@ router.post('/login', authController.login.bind(authController))
  *         description: unauthorized / Token missing / Invalid or expired token
  */
 router.post('/lougout', authenticate, authController.logout.bind(authController))
-
+router.post('/register')
 export default router

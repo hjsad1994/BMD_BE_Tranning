@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS staff (
     phone VARCHAR(20),
     address VARCHAR(255),
     avatar VARCHAR(255),
-    status ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL DEFAULT NULL
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS customer (
     phone VARCHAR(20),
     address VARCHAR(255),
     avatar VARCHAR(255),
-    status ENUM('ACTIVE', 'INACTIVE') DEFAULT 'ACTIVE',
+    status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL DEFAULT NULL
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
     description TEXT,
-    status ENUM('ACTIVE', 'INACTIVE') DEFAULT 'ACTIVE',
+    status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL DEFAULT NULL
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS products (
     price DECIMAL(15,2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
     image_url VARCHAR(500),
-    status ENUM('ACTIVE', 'INACTIVE') DEFAULT 'ACTIVE',
+    status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_products_category FOREIGN KEY (category_id) REFERENCES categories(id),
