@@ -32,7 +32,7 @@ router.get('/', authenticate, requireStaff, categoryController.getAllCategories.
 
 /**
  * @openapi
- * /api/admin/categories/{id}:
+ * /api/admin/categories/detail:
  *   get:
  *     summary: Get a category by ID
  *     description: Returns details of a single category by its ID.
@@ -41,7 +41,7 @@ router.get('/', authenticate, requireStaff, categoryController.getAllCategories.
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -60,7 +60,7 @@ router.get('/', authenticate, requireStaff, categoryController.getAllCategories.
  *       404:
  *         description: Category not found
  */
-router.get('/:id', authenticate, requireStaff, categoryController.getCategoryById.bind(categoryController))
+router.get('/detail', authenticate, requireStaff, categoryController.getCategoryById.bind(categoryController))
 
 /**
  * @openapi
@@ -103,7 +103,7 @@ router.post('/', authenticate, requireStaff, validate(CreateCategorySchema), cat
 
 /**
  * @openapi
- * /api/admin/categories/{id}:
+ * /api/admin/categories:
  *   put:
  *     summary: Update a category
  *     description: Updates an existing category by its ID. Requires staff authentication.
@@ -112,7 +112,7 @@ router.post('/', authenticate, requireStaff, validate(CreateCategorySchema), cat
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -148,11 +148,11 @@ router.post('/', authenticate, requireStaff, validate(CreateCategorySchema), cat
  *       422:
  *         description: Validation failed
  */
-router.put('/:id', authenticate, requireStaff, validate(UpdateCategorySchema), categoryController.updateCategory.bind(categoryController))
+router.put('/', authenticate, requireStaff, validate(UpdateCategorySchema), categoryController.updateCategory.bind(categoryController))
 
 /**
  * @openapi
- * /api/admin/categories/{id}:
+ * /api/admin/categories:
  *   delete:
  *     summary: Delete a category
  *     description: Soft-deletes a category by its ID. The record is not permanently removed. Requires staff authentication.
@@ -161,7 +161,7 @@ router.put('/:id', authenticate, requireStaff, validate(UpdateCategorySchema), c
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -178,12 +178,12 @@ router.put('/:id', authenticate, requireStaff, validate(UpdateCategorySchema), c
  *       403:
  *         description: Account is inactive / Forbidden staff only
  */
-router.delete('/:id', authenticate, requireStaff, categoryController.deleteCategory.bind(categoryController))
+router.delete('/', authenticate, requireStaff, categoryController.deleteCategory.bind(categoryController))
 
 /**
  * @openapi
- * /api/admin/categories/{id}/restore:
- *   patch:
+ * /api/admin/categories/restore:
+ *   put:
  *     summary: Restore a deleted category
  *     description: Restores a soft-deleted category by its ID. Requires staff authentication.
  *     tags:
@@ -191,7 +191,7 @@ router.delete('/:id', authenticate, requireStaff, categoryController.deleteCateg
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -210,6 +210,6 @@ router.delete('/:id', authenticate, requireStaff, categoryController.deleteCateg
  *       404:
  *         description: Category not found or not deleted
  */
-router.patch('/:id/restore', authenticate, requireStaff, categoryController.restoreCategory.bind(categoryController))
+router.put('/restore', authenticate, requireStaff, categoryController.restoreCategory.bind(categoryController))
 
 export default router

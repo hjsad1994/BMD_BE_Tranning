@@ -106,7 +106,7 @@ export class StaffController {
 
     async updateStatus(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -133,7 +133,7 @@ export class StaffController {
 
     async resetPassword(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -177,7 +177,7 @@ export class StaffController {
 
     async getStaffById(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({

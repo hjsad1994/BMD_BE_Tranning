@@ -122,7 +122,7 @@ router.post('/', authenticate, requireStaff, validate(CreateCustomerSchema), cus
 
 /**
  * @openapi
- * /api/admin/customers/{id}:
+ * /api/admin/customers/detail:
  *   get:
  *     summary: Get a customer by ID
  *     description: Returns details of a single customer by their ID.
@@ -131,7 +131,7 @@ router.post('/', authenticate, requireStaff, validate(CreateCustomerSchema), cus
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -150,11 +150,11 @@ router.post('/', authenticate, requireStaff, validate(CreateCustomerSchema), cus
  *       404:
  *         description: Customer not found
  */
-router.get('/:id', authenticate, requireStaff, customerController.getCustomerById.bind(customerController))
+router.get('/detail', authenticate, requireStaff, customerController.getCustomerById.bind(customerController))
 
 /**
  * @openapi
- * /api/admin/customers/{id}:
+ * /api/admin/customers:
  *   put:
  *     summary: Update a customer
  *     description: Updates an existing customer's profile by their ID. Requires staff authentication.
@@ -163,7 +163,7 @@ router.get('/:id', authenticate, requireStaff, customerController.getCustomerByI
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -208,12 +208,12 @@ router.get('/:id', authenticate, requireStaff, customerController.getCustomerByI
  *       422:
  *         description: Validation failed
  */
-router.put('/:id', authenticate, requireStaff, validate(UpdateCustomerSchema), customerController.updateCustomer.bind(customerController))
+router.put('/', authenticate, requireStaff, validate(UpdateCustomerSchema), customerController.updateCustomer.bind(customerController))
 
 /**
  * @openapi
- * /api/admin/customers/{id}/status:
- *   patch:
+ * /api/admin/customers/status:
+ *   put:
  *     summary: Update customer status
  *     description: Activates or deactivates a customer account by their ID.
  *     tags:
@@ -221,7 +221,7 @@ router.put('/:id', authenticate, requireStaff, validate(UpdateCustomerSchema), c
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -253,11 +253,11 @@ router.put('/:id', authenticate, requireStaff, validate(UpdateCustomerSchema), c
  *       422:
  *         description: Validation failed
  */
-router.patch('/:id/status', authenticate, requireStaff, validate(UpdateCustomerStatusSchema), customerController.updateStatus.bind(customerController))
+router.put('/status', authenticate, requireStaff, validate(UpdateCustomerStatusSchema), customerController.updateStatus.bind(customerController))
 
 /**
  * @openapi
- * /api/admin/customers/{id}:
+ * /api/admin/customers:
  *   delete:
  *     summary: Delete a customer
  *     description: Soft-deletes a customer by their ID. The record is not permanently removed.
@@ -266,7 +266,7 @@ router.patch('/:id/status', authenticate, requireStaff, validate(UpdateCustomerS
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -285,12 +285,12 @@ router.patch('/:id/status', authenticate, requireStaff, validate(UpdateCustomerS
  *       404:
  *         description: Customer not found
  */
-router.delete('/:id', authenticate, requireStaff, customerController.deleteCustomer.bind(customerController))
+router.delete('/', authenticate, requireStaff, customerController.deleteCustomer.bind(customerController))
 
 /**
  * @openapi
- * /api/admin/customers/{id}/restore:
- *   patch:
+ * /api/admin/customers/restore:
+ *   put:
  *     summary: Restore a deleted customer
  *     description: Restores a soft-deleted customer by their ID.
  *     tags:
@@ -298,7 +298,7 @@ router.delete('/:id', authenticate, requireStaff, customerController.deleteCusto
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -317,6 +317,6 @@ router.delete('/:id', authenticate, requireStaff, customerController.deleteCusto
  *       404:
  *         description: Customer not found or not deleted
  */
-router.patch('/:id/restore', authenticate, requireStaff, customerController.restoreCustomer.bind(customerController))
+router.put('/restore', authenticate, requireStaff, customerController.restoreCustomer.bind(customerController))
 
 export default router

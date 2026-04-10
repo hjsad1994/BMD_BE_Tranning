@@ -221,7 +221,7 @@ router.post('/', authenticate, requireStaff, validate(CreateStaffSchema), staffC
 
 /**
  * @openapi
- * /api/admin/staff/{id}:
+ * /api/admin/staff/detail:
  *   get:
  *     summary: Get a staff member by ID
  *     description: Returns the profile of a specific staff member by their ID.
@@ -230,7 +230,7 @@ router.post('/', authenticate, requireStaff, validate(CreateStaffSchema), staffC
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -249,7 +249,7 @@ router.post('/', authenticate, requireStaff, validate(CreateStaffSchema), staffC
  *       404:
  *         description: Staff not found
  */
-router.get('/:id', authenticate, requireStaff, staffController.getStaffById.bind(staffController))
+router.get('/detail', authenticate, requireStaff, staffController.getStaffById.bind(staffController))
 
 /**
  * @openapi
@@ -293,7 +293,7 @@ router.put('/profile/change-password', authenticate, requireStaff, validate(Chan
 
 /**
  * @openapi
- * /api/admin/staff/{id}/reset-password:
+ * /api/admin/staff/reset-password:
  *   put:
  *     summary: Reset password for a staff member by ID
  *     description: Allows an authenticated staff member to reset the password of another staff member.
@@ -302,7 +302,7 @@ router.put('/profile/change-password', authenticate, requireStaff, validate(Chan
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -333,12 +333,12 @@ router.put('/profile/change-password', authenticate, requireStaff, validate(Chan
  *       422:
  *         description: Validation failed
  */
-router.put('/:id/reset-password', authenticate, requireStaff, validate(ResetPasswordSchema), staffController.resetPassword.bind(staffController))
+router.put('/reset-password', authenticate, requireStaff, validate(ResetPasswordSchema), staffController.resetPassword.bind(staffController))
 
 /**
  * @openapi
- * /api/admin/staff/{id}/status:
- *   patch:
+ * /api/admin/staff/status:
+ *   put:
  *     summary: Update status of a staff member by ID
  *     description: Allows an authenticated staff member to activate or deactivate another staff member.
  *     tags:
@@ -346,7 +346,7 @@ router.put('/:id/reset-password', authenticate, requireStaff, validate(ResetPass
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -378,6 +378,6 @@ router.put('/:id/reset-password', authenticate, requireStaff, validate(ResetPass
  *       422:
  *         description: Validation failed
  */
-router.patch('/:id/status', authenticate, requireStaff, validate(UpdateStatusSchema), staffController.updateStatus.bind(staffController))
+router.put('/status', authenticate, requireStaff, validate(UpdateStatusSchema), staffController.updateStatus.bind(staffController))
 
 export default router;

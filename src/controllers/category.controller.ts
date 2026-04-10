@@ -23,7 +23,7 @@ export class CategoryController {
 
     async getCategoryById(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -64,7 +64,7 @@ export class CategoryController {
 
     async updateCategory(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -95,7 +95,7 @@ export class CategoryController {
 
     async deleteCategory(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -118,7 +118,7 @@ export class CategoryController {
     }
     async restoreCategory(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({

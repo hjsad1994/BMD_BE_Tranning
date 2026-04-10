@@ -55,7 +55,7 @@ export class CustomerController {
 
     async getCustomerById(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -80,7 +80,7 @@ export class CustomerController {
 
     async updateCustomer(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -111,7 +111,7 @@ export class CustomerController {
 
     async updateStatus(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -137,7 +137,7 @@ export class CustomerController {
 
     async deleteCustomer(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -163,7 +163,7 @@ export class CustomerController {
 
     async restoreCustomer(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({

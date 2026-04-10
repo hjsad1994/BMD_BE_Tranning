@@ -78,7 +78,7 @@ router.get('/', authenticate, requireStaff, productController.getAllProducts.bin
 
 /**
  * @openapi
- * /api/admin/products/category/{id}:
+ * /api/admin/products/category:
  *   get:
  *     summary: Get products by category
  *     description: Returns all products belonging to a specific category.
@@ -87,7 +87,7 @@ router.get('/', authenticate, requireStaff, productController.getAllProducts.bin
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -104,11 +104,11 @@ router.get('/', authenticate, requireStaff, productController.getAllProducts.bin
  *       403:
  *         description: Account is inactive / Forbidden staff only
  */
-router.get('/category/:id', authenticate, requireStaff, productController.getProductsByCategory.bind(productController))
+router.get('/category', authenticate, requireStaff, productController.getProductsByCategory.bind(productController))
 
 /**
  * @openapi
- * /api/admin/products/{id}:
+ * /api/admin/products/detail:
  *   get:
  *     summary: Get a product by ID
  *     description: Returns details of a single product by its ID.
@@ -117,7 +117,7 @@ router.get('/category/:id', authenticate, requireStaff, productController.getPro
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -168,7 +168,7 @@ router.get('/category/:id', authenticate, requireStaff, productController.getPro
  *       404:
  *         description: Product not found
  */
-router.get('/:id', authenticate, requireStaff, productController.getProductById.bind(productController))
+router.get('/detail', authenticate, requireStaff, productController.getProductById.bind(productController))
 
 /**
  * @openapi
@@ -225,7 +225,7 @@ router.post('/', authenticate, requireStaff, validate(CreateProductSchema), prod
 
 /**
  * @openapi
- * /api/admin/products/{id}:
+ * /api/admin/products:
  *   put:
  *     summary: Update a product
  *     description: Updates an existing product by its ID. Requires staff authentication.
@@ -234,7 +234,7 @@ router.post('/', authenticate, requireStaff, validate(CreateProductSchema), prod
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -282,11 +282,11 @@ router.post('/', authenticate, requireStaff, validate(CreateProductSchema), prod
  *       422:
  *         description: Validation failed
  */
-router.put('/:id', authenticate, requireStaff, validate(UpdateProductSchema), productController.updateProduct.bind(productController))
+router.put('/', authenticate, requireStaff, validate(UpdateProductSchema), productController.updateProduct.bind(productController))
 
 /**
  * @openapi
- * /api/admin/products/{id}:
+ * /api/admin/products:
  *   delete:
  *     summary: Delete a product
  *     description: Soft-deletes a product by its ID. The record is not permanently removed. Requires staff authentication.
@@ -295,7 +295,7 @@ router.put('/:id', authenticate, requireStaff, validate(UpdateProductSchema), pr
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -312,12 +312,12 @@ router.put('/:id', authenticate, requireStaff, validate(UpdateProductSchema), pr
  *       403:
  *         description: Account is inactive / Forbidden staff only
  */
-router.delete('/:id', authenticate, requireStaff, productController.deleteProduct.bind(productController))
+router.delete('/', authenticate, requireStaff, productController.deleteProduct.bind(productController))
 
 /**
  * @openapi
- * /api/admin/products/{id}/restore:
- *   patch:
+ * /api/admin/products/restore:
+ *   put:
  *     summary: Restore a deleted product
  *     description: Restores a soft-deleted product by its ID. Requires staff authentication.
  *     tags:
@@ -325,7 +325,7 @@ router.delete('/:id', authenticate, requireStaff, productController.deleteProduc
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: id
  *         required: true
  *         schema:
@@ -344,6 +344,6 @@ router.delete('/:id', authenticate, requireStaff, productController.deleteProduc
  *       404:
  *         description: Product not found or not deleted
  */
-router.patch('/:id/restore', authenticate, requireStaff, productController.restoreProduct.bind(productController))
+router.put('/restore', authenticate, requireStaff, productController.restoreProduct.bind(productController))
 
 export default router

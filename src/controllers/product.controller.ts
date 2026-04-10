@@ -23,7 +23,7 @@ export class ProductController {
 
     async getProductById(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -48,7 +48,7 @@ export class ProductController {
 
     async getProductsByCategory(req: Request, res: Response) {
         try {
-            const categoryId = Number(req.params.id)
+            const categoryId = Number(req.query.id)
 
             if (!categoryId || Number.isNaN(categoryId)) {
                 return res.status(400).json({
@@ -89,7 +89,7 @@ export class ProductController {
 
     async updateProduct(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -120,7 +120,7 @@ export class ProductController {
 
     async deleteProduct(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
@@ -143,7 +143,7 @@ export class ProductController {
     }
     async restoreProduct(req: Request, res: Response) {
         try {
-            const id = Number(req.params.id)
+            const id = Number(req.query.id)
 
             if (!id || Number.isNaN(id)) {
                 return res.status(400).json({
