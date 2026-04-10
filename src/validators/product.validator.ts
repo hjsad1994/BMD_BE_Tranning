@@ -24,12 +24,7 @@ export const CreateProductSchema = z.object({
         .number()
         .positive('Price must be greater than 0'),
 
-    stock: z
-        .number()
-        .int('Stock must be an integer')
-        .min(0, 'Stock cannot be negative'),
-
-        image_url: z.url({ error: 'image_url must be a valid URL' }).optional(),
+    image_url: z.url({ error: 'image_url must be a valid URL' }).optional(),
 })
 
 export type CreateProductInput = z.infer<typeof CreateProductSchema>
@@ -58,12 +53,6 @@ export const UpdateProductSchema = z.object({
     price: z
         .number()
         .positive('Price must be greater than 0')
-        .optional(),
-
-    stock: z
-        .number()
-        .int('Stock must be an integer')
-        .min(0, 'Stock cannot be negative')
         .optional(),
 
     image_url: z

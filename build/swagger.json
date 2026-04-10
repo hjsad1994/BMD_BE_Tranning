@@ -1,0 +1,1771 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"InitStaffBody": {
+				"properties": {
+					"username": {
+						"type": "string",
+						"example": "admin"
+					},
+					"first_name": {
+						"type": "string",
+						"example": "Tai"
+					},
+					"last_name": {
+						"type": "string",
+						"example": "Tran"
+					},
+					"email": {
+						"type": "string",
+						"example": "admin@example.com"
+					},
+					"password": {
+						"type": "string",
+						"example": "Aa@123456"
+					}
+				},
+				"required": [
+					"username",
+					"first_name",
+					"last_name",
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateProfileBody": {
+				"properties": {
+					"first_name": {
+						"type": "string",
+						"example": "Tai"
+					},
+					"last_name": {
+						"type": "string",
+						"example": "Tran"
+					},
+					"email": {
+						"type": "string",
+						"example": "admin@example.com"
+					},
+					"phone": {
+						"type": "string",
+						"example": "0778946513"
+					},
+					"address": {
+						"type": "string",
+						"example": "51 Duong A , TPHCM"
+					},
+					"avatar": {
+						"type": "string",
+						"example": "https://example.com/avatar.png"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateStaffBody": {
+				"properties": {
+					"username": {
+						"type": "string",
+						"example": "staff01"
+					},
+					"first_name": {
+						"type": "string",
+						"example": "Tai"
+					},
+					"last_name": {
+						"type": "string",
+						"example": "Tran"
+					},
+					"email": {
+						"type": "string",
+						"example": "staff01@example.com"
+					},
+					"password": {
+						"type": "string",
+						"example": "Aa@123456"
+					}
+				},
+				"required": [
+					"username",
+					"first_name",
+					"last_name",
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ChangePasswordBody": {
+				"properties": {
+					"oldPassword": {
+						"type": "string",
+						"example": "Aa@123456"
+					},
+					"newPassword": {
+						"type": "string",
+						"example": "Aa@1234567"
+					}
+				},
+				"required": [
+					"oldPassword",
+					"newPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResetPasswordBody": {
+				"properties": {
+					"newPassword": {
+						"type": "string",
+						"example": "Aa@123456"
+					}
+				},
+				"required": [
+					"newPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateStatusBody": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"active",
+							"inactive"
+						],
+						"example": "inactive"
+					}
+				},
+				"required": [
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateProductBody": {
+				"properties": {
+					"category_id": {
+						"type": "number",
+						"format": "double",
+						"example": 1
+					},
+					"name": {
+						"type": "string",
+						"example": "iPhone 15"
+					},
+					"description": {
+						"type": "string",
+						"example": "test test test"
+					},
+					"price": {
+						"type": "number",
+						"format": "double",
+						"example": 999.99
+					},
+					"image_url": {
+						"type": "string",
+						"example": "https://example.com/iphone.png"
+					}
+				},
+				"required": [
+					"name",
+					"price"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateProductBody": {
+				"properties": {
+					"category_id": {
+						"type": "number",
+						"format": "double",
+						"example": 2
+					},
+					"name": {
+						"type": "string",
+						"example": "iPhone"
+					},
+					"description": {
+						"type": "string",
+						"example": "updated test test etst"
+					},
+					"price": {
+						"type": "number",
+						"format": "double",
+						"example": 1199.99
+					},
+					"image_url": {
+						"type": "string",
+						"example": "https://example.com/1.png"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"active",
+							"inactive"
+						],
+						"example": "active"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateOrderItemBody": {
+				"properties": {
+					"product_id": {
+						"type": "number",
+						"format": "double",
+						"example": 1
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double",
+						"example": 2
+					}
+				},
+				"required": [
+					"product_id",
+					"quantity"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateOrderBody": {
+				"properties": {
+					"customer_id": {
+						"type": "number",
+						"format": "double",
+						"example": 1
+					},
+					"shipping_address": {
+						"type": "string",
+						"example": "123 Nguyen Trai, Q1, Ho Chi Minh City"
+					},
+					"items": {
+						"items": {
+							"$ref": "#/components/schemas/CreateOrderItemBody"
+						},
+						"type": "array",
+						"example": [
+							{
+								"product_id": 1,
+								"quantity": 2
+							}
+						]
+					}
+				},
+				"required": [
+					"customer_id",
+					"shipping_address",
+					"items"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateOrderStatusBody": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"PENDING",
+							"CONFIRMED",
+							"SHIPPING",
+							"COMPLETED",
+							"CANCELLED"
+						],
+						"example": "CONFIRMED"
+					},
+					"note": {
+						"type": "string",
+						"example": "Order confirmed by admin"
+					}
+				},
+				"required": [
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CancelOrderBody": {
+				"properties": {
+					"note": {
+						"type": "string",
+						"example": "Customer requested cancellation"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateCustomerBody": {
+				"properties": {
+					"username": {
+						"type": "string",
+						"example": "user1"
+					},
+					"first_name": {
+						"type": "string",
+						"example": "Tran"
+					},
+					"last_name": {
+						"type": "string",
+						"example": "Tai"
+					},
+					"email": {
+						"type": "string",
+						"example": "user1@example.com"
+					},
+					"password": {
+						"type": "string",
+						"example": "Aa@123456"
+					}
+				},
+				"required": [
+					"username",
+					"first_name",
+					"last_name",
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateCustomerBody": {
+				"properties": {
+					"first_name": {
+						"type": "string",
+						"example": "Tran"
+					},
+					"last_name": {
+						"type": "string",
+						"example": "Tai"
+					},
+					"email": {
+						"type": "string",
+						"example": "user1@example.com"
+					},
+					"phone": {
+						"type": "string",
+						"example": "0778946513"
+					},
+					"address": {
+						"type": "string",
+						"example": "51 Duong A, TPHCM"
+					},
+					"avatar": {
+						"type": "string",
+						"example": "https://example.com/avatar.png"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateCustomerStatusBody": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"active",
+							"inactive"
+						],
+						"example": "inactive"
+					}
+				},
+				"required": [
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateCategoryBody": {
+				"properties": {
+					"name": {
+						"type": "string",
+						"example": "Apple"
+					},
+					"description": {
+						"type": "string",
+						"example": "Apple test"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateCategoryBody": {
+				"properties": {
+					"name": {
+						"type": "string",
+						"example": "Apple Updated"
+					},
+					"description": {
+						"type": "string",
+						"example": "Apple test updated"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"active",
+							"inactive"
+						],
+						"example": "active"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginBody": {
+				"properties": {
+					"username": {
+						"type": "string",
+						"example": "admin"
+					},
+					"password": {
+						"type": "string",
+						"example": "Aa@123456"
+					}
+				},
+				"required": [
+					"username",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
+	},
+	"info": {
+		"title": "BMD Training API",
+		"version": "1.0.0",
+		"description": "API documentation for BMD Training backend",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/api/admin/staff/init-staff": {
+			"post": {
+				"operationId": "InitStaff",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Initialize the first staff account",
+				"tags": [
+					"Staff"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "x-init-secret",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/InitStaffBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/admin/staff/profile": {
+			"get": {
+				"operationId": "GetProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get authenticated staff profile",
+				"tags": [
+					"Staff"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			},
+			"put": {
+				"operationId": "UpdateProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Update authenticated staff profile",
+				"tags": [
+					"Staff"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateProfileBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/admin/staff": {
+			"get": {
+				"operationId": "GetAllStaffProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get all staff profiles",
+				"tags": [
+					"Staff"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateStaff",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Create a new staff account",
+				"tags": [
+					"Staff"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateStaffBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/admin/staff/detail": {
+			"get": {
+				"operationId": "GetStaffById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get a staff member by ID",
+				"tags": [
+					"Staff"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/admin/staff/profile/change-password": {
+			"put": {
+				"operationId": "ChangePassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Change password for authenticated staff",
+				"tags": [
+					"Staff"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChangePasswordBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/admin/staff/reset-password": {
+			"put": {
+				"operationId": "ResetPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Reset password for a staff member by ID",
+				"tags": [
+					"Staff"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ResetPasswordBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/admin/staff/status": {
+			"put": {
+				"operationId": "UpdateStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Update status of a staff member by ID",
+				"tags": [
+					"Staff"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateStatusBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/admin/products": {
+			"get": {
+				"operationId": "GetAllProducts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get all products",
+				"tags": [
+					"Products"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateProduct",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Create a new product",
+				"tags": [
+					"Products"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateProductBody"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "UpdateProduct",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Update a product",
+				"tags": [
+					"Products"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateProductBody"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteProduct",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Delete a product",
+				"tags": [
+					"Products"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/admin/products/category": {
+			"get": {
+				"operationId": "GetProductsByCategory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get products by category",
+				"tags": [
+					"Products"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/admin/products/detail": {
+			"get": {
+				"operationId": "GetProductById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get a product by ID",
+				"tags": [
+					"Products"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/admin/products/restore": {
+			"put": {
+				"operationId": "RestoreProduct",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Restore a deleted product",
+				"tags": [
+					"Products"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/admin/products/upload-image": {
+			"post": {
+				"operationId": "UploadProductImage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Upload product image",
+				"tags": [
+					"Products"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"image": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"image"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/admin/orders": {
+			"get": {
+				"operationId": "GetAllOrders",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get all orders",
+				"tags": [
+					"Orders"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Create a new order",
+				"tags": [
+					"Orders"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateOrderBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/admin/orders/detail": {
+			"get": {
+				"operationId": "GetOrderById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get order detail by ID (includes items)",
+				"tags": [
+					"Orders"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/admin/orders/status": {
+			"put": {
+				"operationId": "UpdateOrderStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Update order status",
+				"tags": [
+					"Orders"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateOrderStatusBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/admin/orders/cancel": {
+			"put": {
+				"operationId": "CancelOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Cancel an order",
+				"tags": [
+					"Orders"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CancelOrderBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/admin/customers": {
+			"get": {
+				"operationId": "GetAllCustomers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get all customers",
+				"tags": [
+					"Customers"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateCustomer",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Create a new customer account",
+				"tags": [
+					"Customers"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateCustomerBody"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "UpdateCustomer",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Update a customer",
+				"tags": [
+					"Customers"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateCustomerBody"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteCustomer",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Delete a customer",
+				"tags": [
+					"Customers"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/admin/customers/detail": {
+			"get": {
+				"operationId": "GetCustomerById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get a customer by ID",
+				"tags": [
+					"Customers"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/admin/customers/status": {
+			"put": {
+				"operationId": "UpdateStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Update customer status",
+				"tags": [
+					"Customers"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateCustomerStatusBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/admin/customers/restore": {
+			"put": {
+				"operationId": "RestoreCustomer",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Restore a deleted customer",
+				"tags": [
+					"Customers"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/admin/categories": {
+			"get": {
+				"operationId": "GetAllCategories",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get all categories",
+				"tags": [
+					"Categories"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateCategory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Create a new category",
+				"tags": [
+					"Categories"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateCategoryBody"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "UpdateCategory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Update a category",
+				"tags": [
+					"Categories"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateCategoryBody"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteCategory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Delete a category",
+				"tags": [
+					"Categories"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/admin/categories/detail": {
+			"get": {
+				"operationId": "GetCategoryById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Get a category by ID",
+				"tags": [
+					"Categories"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/admin/categories/restore": {
+			"put": {
+				"operationId": "RestoreCategory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Restore a deleted category",
+				"tags": [
+					"Categories"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Login with username and password",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/auth/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"summary": "Logout authenticated user",
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

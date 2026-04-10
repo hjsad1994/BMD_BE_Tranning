@@ -13,15 +13,15 @@ export class ProductRepository {
 
     async findById(id: number): Promise<Product | null> {
         const [rows] = await pool.promise().query<Product[]>(
-            `SELECT id, category_id, name, description, price, stock, image_url, status, created_at, updated_at 
-            FROM products WHERE id = ? AND deleted_at IS NULL LIMIT 1`,
+            `SELECT id, category_id, name, description, price, image_url, status, created_at, updated_at
+             FROM products WHERE id = ? AND deleted_at IS NULL LIMIT 1`,
             [id]
         )
         return rows[0] ?? null
     }
     async findDeleteById(id: number): Promise<Product | null> {
         const [rows] = await pool.promise().query<Product[]>(
-            `SELECT id, category_id, name, description, price, stock, image_url, status, created_at, updated_at
+            `SELECT id, category_id, name, description, price, image_url, status, created_at, updated_at
              FROM products WHERE id = ? AND deleted_at IS NOT NULL LIMIT 1`,
             [id]
         )
@@ -32,7 +32,7 @@ export class ProductRepository {
     async findAll(): Promise<ProductWithCategoryRow[]> {
         const [rows] = await pool.promise().query<ProductWithCategoryRow[]>(
             `SELECT
-                p.id, p.name, p.description, p.price, p.stock, p.image_url, p.status, p.created_at, p.updated_at,
+                p.id, p.name, p.description, p.price, p.image_url, p.status, p.created_at, p.updated_at,
                 c.id AS cat_id, c.name AS cat_name, c.description AS cat_description, c.status AS cat_status
              FROM products p
              LEFT JOIN categories c ON p.category_id = c.id AND c.deleted_at IS NULL
@@ -45,7 +45,7 @@ export class ProductRepository {
     async findWithCategoryById(id: number): Promise<ProductWithCategoryRow | null> {
         const [rows] = await pool.promise().query<ProductWithCategoryRow[]>(
             `SELECT
-                p.id, p.name, p.description, p.price, p.stock, p.image_url, p.status, p.created_at, p.updated_at,
+                p.id, p.name, p.description, p.price, p.image_url, p.status, p.created_at, p.updated_at,
                 c.id AS cat_id, c.name AS cat_name, c.description AS cat_description, c.status AS cat_status
              FROM products p
              LEFT JOIN categories c ON p.category_id = c.id AND c.deleted_at IS NULL
@@ -58,7 +58,7 @@ export class ProductRepository {
     async findByCategoryId(categoryId: number): Promise<ProductWithCategoryRow[]> {
         const [rows] = await pool.promise().query<ProductWithCategoryRow[]>(
             `SELECT
-                p.id, p.name, p.description, p.price, p.stock, p.image_url, p.status, p.created_at, p.updated_at,
+                p.id, p.name, p.description, p.price, p.image_url, p.status, p.created_at, p.updated_at,
                 c.id AS cat_id, c.name AS cat_name, c.description AS cat_description, c.status AS cat_status
              FROM products p
              LEFT JOIN categories c ON p.category_id = c.id AND c.deleted_at IS NULL
@@ -71,9 +71,9 @@ export class ProductRepository {
 
     async createProduct(data: CreateProductData): Promise<number> {
         const [result] = await pool.promise().query<ResultSetHeader>(
-            `INSERT INTO products (category_id, name, description, price, stock, image_url)
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [data.category_id ?? null, data.name, data.description ?? null, data.price, data.stock, data.image_url ?? null]
+            `INSERT INTO products (category_id, name, description, price, image_url)
+             VALUES (?, ?, ?, ?, ?)`,
+            [data.category_id ?? null, data.name, data.description ?? null, data.price, data.image_url ?? null]
         )
         return result.insertId
     }
@@ -97,10 +97,6 @@ export class ProductRepository {
         if (data.price !== undefined) {
             fields.push('price = ?')
             values.push(data.price)
-        }
-        if (data.stock !== undefined) {
-            fields.push('stock = ?')
-            values.push(data.stock)
         }
         if (data.image_url !== undefined) {
             fields.push('image_url = ?')

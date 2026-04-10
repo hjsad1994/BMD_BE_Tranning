@@ -12,7 +12,6 @@ export class ProductServices {
             name: row.name,
             description: row.description,
             price: row.price,
-            stock: row.stock,
             image_url: row.image_url,
             status: row.status,
             created_at: row.created_at,
@@ -72,12 +71,11 @@ export class ProductServices {
 
         const hasData =
             data.category_id !== undefined ||
-            data.name !== undefined ||
+            data.name        !== undefined ||
             data.description !== undefined ||
-            data.price !== undefined ||
-            data.stock !== undefined ||
-            data.image_url !== undefined ||
-            data.status !== undefined
+            data.price       !== undefined ||
+            data.image_url   !== undefined ||
+            data.status      !== undefined
 
         if (!hasData) {
             throw new Error('No data to update')

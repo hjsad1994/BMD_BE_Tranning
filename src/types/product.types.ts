@@ -6,7 +6,6 @@ export interface Product extends RowDataPacket {
     name: string
     description: string | null
     price: number
-    stock: number
     image_url: string | null
     status: 'active' | 'inactive'
     created_at: Date
@@ -20,12 +19,11 @@ export interface ProductWithCategoryRow extends RowDataPacket {
     name: string
     description: string | null
     price: number
-    stock: number
     image_url: string | null
     status: 'active' | 'inactive'
     created_at: Date
     updated_at: Date
-    // category fields 
+    // category fields
     cat_id: number | null
     cat_name: string | null
     cat_description: string | null
@@ -38,7 +36,6 @@ export interface ProductResponse {
     name: string
     description: string | null
     price: number
-    stock: number
     image_url: string | null
     status: 'active' | 'inactive'
     created_at: Date
@@ -56,7 +53,6 @@ export interface CreateProductData {
     name: string
     description?: string
     price: number
-    stock: number
     image_url?: string
 }
 
@@ -65,7 +61,6 @@ export interface UpdateProductData {
     name?: string
     description?: string
     price?: number
-    stock?: number
     image_url?: string
     status?: 'active' | 'inactive'
 }

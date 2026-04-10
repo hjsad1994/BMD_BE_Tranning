@@ -1,0 +1,23 @@
+{
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/tsoa-controllers/**/*.ts"],
+  "spec": {
+    "outputDirectory": "build",
+    "specVersion": 3,
+    "name": "BMD Training API",
+    "version": "1.0.0",
+    "description": "API documentation for BMD Training backend",
+    "securityDefinitions": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "routes": {
+    "routesDir": "build",
+    "authenticationModule": "./src/middleware/authentication.ts"
+  }
+}
