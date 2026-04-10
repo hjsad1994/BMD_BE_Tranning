@@ -3,6 +3,7 @@ import { ProductController } from '../controllers/product.controller.js'
 import { authenticate } from '../middleware/auth.middleware.js'
 import { requireStaff } from '../middleware/staff.middleware.js'
 import { validate } from '../middleware/validate.middleware.js'
+import { uploadImage } from '../middleware/upload.middleware.js'
 import { CreateProductSchema, UpdateProductSchema } from '../validators/product.validator.js'
 
 const router = Router()
@@ -345,5 +346,67 @@ router.delete('/', authenticate, requireStaff, productController.deleteProduct.b
  *         description: Product not found or not deleted
  */
 router.put('/restore', authenticate, requireStaff, productController.restoreProduct.bind(productController))
+
+/**
+ * @openapi
+ * /api/admin/products/upload-image:
+ *   post:
+ *     summary: Upload product image
+ *     description: Uploads an image file for a specific product and updates the product's image_url. Requires staff authentication.
+ *     tags:
+ *       - Products
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The product ID to upload the image for
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - image
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Image file (JPEG, JPG, PNG, GIF, or WEBP). Max size 5MB.
+ *     responses:
+ *       200:
+ *         description: Product image uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Product image uploaded successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     image_url:
+ *                       type: string
+ *                       example: /uploads/products/product-1712345678901-123456789.png
+ *       400:
+ *         description: Invalid product id / No image file provided / Invalid file type / File too large
+ *       401:
+ *         description: Unauthorized / Token missing / Invalid or expired token
+ *       403:
+ *         description: Account is inactive / Forbidden staff only
+ *       404:
+ *         description: Product not found
+ */
+router.post('/upload-image', authenticate, requireStaff, uploadImage, productController.uploadProductImage.bind(productController))
 
 export default router

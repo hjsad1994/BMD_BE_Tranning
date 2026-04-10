@@ -166,4 +166,36 @@ export class ProductController {
             })
         }
     }
+    async uploadProductImage(req: Request, res: Response) {
+        try {
+            if (!req.file) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No image file provided'
+                })
+            }
+
+            const productId = Number(req.query.id)
+            if (!productId || Number.isNaN(productId)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid product id'
+                })
+            }
+
+            const imageUrl = `/uploads/products/${req.file.filename}`
+            await productService.updateProduct(productId, { image_url: imageUrl })
+
+            return res.status(200).json({
+                success: true,
+                message: 'Product image uploaded successfully',
+                data: { image_url: imageUrl }
+            })
+        } catch (error) {
+            return res.status(400).json({
+                success: false,
+                message: error instanceof Error ? error.message : 'Update product image failed'
+            })
+        }
+    }
 }

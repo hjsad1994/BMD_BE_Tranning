@@ -1,6 +1,7 @@
 import express from "express";
 import swaggerUi from 'swagger-ui-express'
 import swaggerJSDoc from "swagger-jsdoc";
+import path from "path";
 
 import initDatabase from "./db/dbinit.js";
 import staffRoutes from './routes/staff.routes.js'
@@ -12,6 +13,9 @@ import customerRoutes from './routes/customer.routes.js'
 const app = express();
 
 app.use(express.json());
+
+// Serve uploaded files as static assets
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // init database
 initDatabase();
