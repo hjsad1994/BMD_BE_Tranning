@@ -1,14 +1,33 @@
-import type { ResultSetHeader } from 'mysql2'
+import type { ResultSetHeader, RowDataPacket } from 'mysql2'
 import pool from '../db/mysql.js'
 import type { Order, OrderItem } from '../types/order.types.js'
 
 export class OrderRepository {
+
+    async countOrders(): Promise<number> {
+        const [rows] = await pool.promise().query<RowDataPacket[]>(
+            'SELECT COUNT(*) AS total FROM orders'
+        )
+        return rows[0] !== undefined ? Number(rows[0].total) : 0
+    }
 
     async findAll(): Promise<Order[]> {
         const [rows] = await pool.promise().query<Order[]>(
             `SELECT id, customer_id, total_amount, status, shipping_address, created_at, updated_at
              FROM orders
              ORDER BY created_at DESC`
+        )
+        return rows
+    }
+
+    async findAllPaginated(page: number, limit: number): Promise<Order[]> {
+        const offset = (page - 1) * limit
+        const [rows] = await pool.promise().query<Order[]>(
+            `SELECT id, customer_id, total_amount, status, shipping_address, created_at, updated_at
+             FROM orders
+             ORDER BY created_at DESC
+             LIMIT ? OFFSET ?`,
+            [limit, offset]
         )
         return rows
     }

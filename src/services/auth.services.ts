@@ -55,50 +55,56 @@ export class AuthService {
           }
     }
 
-    // async loginCustomer(data: LoginData) {
-    //     const { username, password } = data
-    //     if (!username || !password) {
-    //         throw new Error('Username and password are required')
-    //     }
-    //     const customer = await customerRepository.findAuthByUsername(username)
-    //     if (!customer) {
-    //         throw new Error('Invalid username or password')
-    //     }
-    //     if (customer.status !== 'active') {
-    //         throw new Error('Customer account is inactive')
-    //     }
-    //     const isMatch = await bcrypt.compare(password, customer.password_hash as string)
-    //     if (!isMatch) {
-    //         throw new Error('Invalid username or password')
-    //     }
-    //     const secret: Secret = process.env.JWT_SECRET as string
-    //     const expiresIn: SignOptions['expiresIn'] = '1d'
-    //     if (!secret) {
-    //         throw new Error('JWT_SECRET is not configured')
-    //     }
-    //     const token = jwt.sign(
-    //         {
-    //           id: customer.id,
-    //           username: customer.username,
-    //           email: customer.email,
-    //           accountType: 'customer'
-    //         },
-    //         secret,
-    //         { expiresIn }
-    //     )
-    //     return {
-    //         token,
-    //         customer: {
-    //             id: customer.id,
-    //             username: customer.username,
-    //             first_name: customer.first_name,
-    //             last_name: customer.last_name,
-    //             email: customer.email,
-    //             phone: customer.phone,
-    //             address: customer.address,
-    //             status: customer.status
-    //         }
-    // }
+    async loginCustomer(data: LoginData) {
+        const { username, password } = data
+        if (!username || !password) {
+            throw new Error('Username and password are required')
+        }
+
+        const customer = await customerRepository.findAuthByUsername(username)
+        if (!customer) {
+            throw new Error('Invalid username or password')
+        }
+        if (customer.status !== 'active') {
+            throw new Error('Customer account is inactive')
+        }
+
+        const isMatch = await bcrypt.compare(password, customer.password_hash as string)
+        if (!isMatch) {
+            throw new Error('Invalid username or password')
+        }
+
+        const secret: Secret = process.env.JWT_SECRET as string
+        if (!secret) {
+            throw new Error('JWT_SECRET is not configured')
+        }
+
+        const expiresIn: SignOptions['expiresIn'] = '1d'
+        const token = jwt.sign(
+            {
+                id: customer.id,
+                username: customer.username,
+                email: customer.email,
+                accountType: 'user',
+            },
+            secret,
+            { expiresIn }
+        )
+
+        return {
+            token,
+            customer: {
+                id:         customer.id,
+                username:   customer.username,
+                first_name: customer.first_name,
+                last_name:  customer.last_name,
+                email:      customer.email,
+                phone:      customer.phone,
+                address:    customer.address,
+                status:     customer.status,
+            },
+        }
+    }
 
     async logout () {
         return {

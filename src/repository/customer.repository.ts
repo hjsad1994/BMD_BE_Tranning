@@ -4,6 +4,13 @@ import type { Customer, CreateCustomerData, UpdateCustomerData } from '../types/
 
 export class CustomerRepository {
 
+    async countCustomers(): Promise<number> {
+        const [rows] = await pool.promise().query<RowDataPacket[]>(
+            'SELECT COUNT(*) AS total FROM customer WHERE deleted_at IS NULL'
+        )
+        return rows[0] !== undefined ? Number(rows[0].total) : 0
+    }
+
     async findById(id: number): Promise<Customer | null> {
         const [rows] = await pool.promise().query<Customer[]>(
             'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM customer WHERE id = ? AND deleted_at IS NULL LIMIT 1',
@@ -23,6 +30,15 @@ export class CustomerRepository {
     async findAll(): Promise<Customer[]> {
         const [rows] = await pool.promise().query<Customer[]>(
             'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM customer WHERE deleted_at IS NULL ORDER BY created_at DESC'
+        )
+        return rows
+    }
+
+    async findAllPaginated(page: number, limit: number): Promise<Customer[]> {
+        const offset = (page - 1) * limit
+        const [rows] = await pool.promise().query<Customer[]>(
+            'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM customer WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT ? OFFSET ?',
+            [limit, offset]
         )
         return rows
     }
@@ -129,6 +145,14 @@ export class CustomerRepository {
         const [result] = await pool.promise().query<ResultSetHeader>(
             'UPDATE customer SET deleted_at = NULL WHERE id = ? AND deleted_at IS NOT NULL',
             [id]
+        )
+        return result.affectedRows > 0
+    }
+
+    async updatePasswordHash(id: number, passwordHash: string): Promise<boolean> {
+        const [result] = await pool.promise().query<ResultSetHeader>(
+            'UPDATE customer SET password_hash = ? WHERE id = ? AND deleted_at IS NULL',
+            [passwordHash, id]
         )
         return result.affectedRows > 0
     }

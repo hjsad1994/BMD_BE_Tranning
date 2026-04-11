@@ -16,8 +16,15 @@ export class CustomerServices {
         return { id: customerId, username: data.username, email: data.email }
     }
 
-    async getAllCustomers() {
-        return await this.customerRepository.findAll()
+    async getAllCustomers(page: number, limit: number) {
+        const [customers, total] = await Promise.all([
+            this.customerRepository.findAllPaginated(page, limit),
+            this.customerRepository.countCustomers(),
+        ])
+        return {
+            customers,
+            pagination: { total, page, limit, totalPages: Math.ceil(total / limit) },
+        }
     }
 
     async getCustomerById(id: number) {
@@ -78,5 +85,15 @@ export class CustomerServices {
             throw new Error('Customer not found or not deleted')
         }
         return this.customerRepository.restoreCustomer(id)
+    }
+
+    // Admin resets a customer's password without knowing the current one
+    async resetPassword(id: number, newPassword: string): Promise<boolean> {
+        const customer = await this.customerRepository.findById(id)
+        if (!customer) {
+            throw new Error('Customer not found')
+        }
+        const passwordHash = await bcrypt.hash(newPassword, 10)
+        return this.customerRepository.updatePasswordHash(id, passwordHash)
     }
 }

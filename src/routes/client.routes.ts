@@ -1,21 +1,20 @@
-// backend/src/routes/customer.routes.ts
 import { Router } from 'express'
 import { ClientController } from '../tsoa-controllers/ClientController.js'
 import { authenticateClient } from '../middleware/client.middleware.js'
 import { validate } from '../middleware/validate.middleware.js'
-import { UpdateProfileSchema, ChangePasswordSchema } from '../validators/customer.validator.js'
+import { UpdateProfileSchema, ChangePasswordSchema } from '../validators/client.validator.js'
 
 const router = Router()
 const clientController = new ClientController()
 
-// GET /api/customer/profile — get my profile
+// GET /api/client/profile — get my profile
 router.get(
     '/profile',
     authenticateClient,
     clientController.getProfileHandler.bind(clientController)
 )
 
-// PUT /api/customer/profile — update my profile
+// PUT /api/client/profile — update my profile
 router.put(
     '/profile',
     authenticateClient,
@@ -23,7 +22,7 @@ router.put(
     clientController.updateProfileHandler.bind(clientController)
 )
 
-// PUT /api/customer/change-password — change my password
+// PUT /api/client/change-password — change my password
 router.put(
     '/change-password',
     authenticateClient,
@@ -31,7 +30,7 @@ router.put(
     clientController.changePasswordHandler.bind(clientController)
 )
 
-// DELETE /api/customer/account — soft-delete my account
+// DELETE /api/client/account — soft-delete my account
 router.delete(
     '/account',
     authenticateClient,

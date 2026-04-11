@@ -1,50 +1,72 @@
+// backend/src/validators/customer.validator.ts
 import { z } from 'zod'
 
-export const CreateCustomerSchema = z.object({
-    username: z
-        .string()
-        .trim()
-        .min(3, 'Username must be at least 3 characters'),
+const passwordSchema = z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character')
 
-    first_name: z
-        .string()
-        .trim()
-        .min(1, 'First name is required'),
+// PUT /api/customer/profile
+export const UpdateProfileSchema = z
+    .object({
+        first_name: z
+            .string()
+            .trim()
+            .min(1, 'First name must not be empty')
+            .max(100, 'First name must not exceed 100 characters')
+            .optional(),
 
-    last_name: z
-        .string()
-        .trim()
-        .min(1, 'Last name is required'),
+        last_name: z
+            .string()
+            .trim()
+            .min(1, 'Last name must not be empty')
+            .max(100, 'Last name must not exceed 100 characters')
+            .optional(),
 
-    email: z.email({ message: 'Invalid email format' }),
+        email: z
+            .string()
+            .email('Invalid email format')
+            .optional(),
 
-    password: z
-        .string()
-        .min(8, 'Password must be at least 8 characters')
-        .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-        .regex(/[0-9]/, 'Password must contain at least one number')
-        .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
-})
+        phone: z
+            .string()
+            .trim()
+            .regex(/^\+?[0-9]{7,15}$/, 'Invalid phone number')
+            .optional(),
 
-export type CreateCustomerInput = z.infer<typeof CreateCustomerSchema>
+        address: z
+            .string()
+            .trim()
+            .min(1, 'Address must not be empty')
+            .max(255, 'Address must not exceed 255 characters')
+            .optional(),
 
-// PUT /api/admin/customers/:id
-export const UpdateCustomerSchema = z.object({
-    first_name: z.string().trim().min(1, 'First name must not be empty').optional(),
-    last_name:  z.string().trim().min(1, 'Last name must not be empty').optional(),
-    email:      z.string().email({ message: 'Invalid email format' }).optional(),
-    phone:      z.string().trim().regex(/^\+?[0-9]{7,15}$/, 'Invalid phone number').optional(),
-    address:    z.string().trim().min(1, 'Address must not be empty').optional(),
-    avatar:     z.string().url('Avatar must be a valid URL').optional(),
-})
+        avatar: z
+            .string()
+            .url('Avatar must be a valid URL')
+            .optional(),
+    })
+    .refine(
+        (data) => Object.keys(data).length > 0,
+        { message: 'At least one field must be provided' }
+    )
 
-export type UpdateCustomerInput = z.infer<typeof UpdateCustomerSchema>
+export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>
 
-// PATCH /api/admin/customers/:id/status
-export const UpdateCustomerStatusSchema = z.object({
-    status: z.enum(['active', 'inactive'], {
-        message: "Status must be 'active' or 'inactive'",
-    }),
-})
+// PUT /api/customer/change-password
+export const ChangePasswordSchema = z
+    .object({
+        current_password: z
+            .string()
+            .min(1, 'Current password is required'),
 
-export type UpdateCustomerStatusInput = z.infer<typeof UpdateCustomerStatusSchema>
+        new_password: passwordSchema,
+    })
+    .refine(
+        (data) => data.current_password !== data.new_password,
+        { message: 'New password must be different from current password', path: ['new_password'] }
+    )
+
+export type ChangePasswordInput = z.infer<typeof ChangePasswordSchema>

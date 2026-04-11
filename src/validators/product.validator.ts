@@ -22,7 +22,7 @@ export const CreateProductSchema = z.object({
 
     price: z
         .number()
-        .positive('Price must be greater than 0'),
+        .nonnegative('Price must be greater than or equal to 0'),
 
     image_url: z.url({ error: 'image_url must be a valid URL' }).optional(),
 })
@@ -52,7 +52,7 @@ export const UpdateProductSchema = z.object({
 
     price: z
         .number()
-        .positive('Price must be greater than 0')
+        .nonnegative('Price must be greater than or equal to 0')
         .optional(),
 
     image_url: z

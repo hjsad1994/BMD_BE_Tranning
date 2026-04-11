@@ -20,7 +20,7 @@ router.get('/profile', authenticate, requireStaff, staffController.getProfileHan
 router.put('/profile', authenticate, requireStaff, validate(UpdateProfileSchema), staffController.updateProfileHandler.bind(staffController))
 router.get('/', authenticate, requireStaff, staffController.getAllStaffProfileHandler.bind(staffController))
 router.post('/', authenticate, requireStaff, validate(CreateStaffSchema), staffController.createStaffHandler.bind(staffController))
-router.get('/detail', authenticate, requireStaff, staffController.getStaffByIdHandler.bind(staffController))
+router.get('/:staffId', authenticate, requireStaff, staffController.getStaffByIdHandler.bind(staffController))
 router.put('/profile/change-password', authenticate, requireStaff, validate(ChangePasswordSchema), staffController.changePasswordHandler.bind(staffController))
 router.put('/reset-password', authenticate, requireStaff, validate(ResetPasswordSchema), staffController.resetPasswordHandler.bind(staffController))
 router.put('/status', authenticate, requireStaff, validate(UpdateStatusSchema), staffController.updateStatusHandler.bind(staffController))

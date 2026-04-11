@@ -69,6 +69,22 @@ export class ProductRepository {
         return rows
     }
 
+    async findAllPaginated(page: number, limit: number): Promise<ProductWithCategoryRow[]> {
+        const offset = (page - 1) * limit
+        const [rows] = await pool.promise().query<ProductWithCategoryRow[]>(
+            `SELECT
+                p.id, p.name, p.description, p.price, p.image_url, p.status, p.created_at, p.updated_at,
+                c.id AS cat_id, c.name AS cat_name, c.description AS cat_description, c.status AS cat_status
+             FROM products p
+             LEFT JOIN categories c ON p.category_id = c.id AND c.deleted_at IS NULL
+             WHERE p.deleted_at IS NULL
+             ORDER BY p.created_at DESC
+             LIMIT ? OFFSET ?`,
+            [limit, offset]
+        )
+        return rows
+    }
+
     async createProduct(data: CreateProductData): Promise<number> {
         const [result] = await pool.promise().query<ResultSetHeader>(
             `INSERT INTO products (category_id, name, description, price, image_url)

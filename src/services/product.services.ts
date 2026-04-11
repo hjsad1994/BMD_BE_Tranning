@@ -25,9 +25,20 @@ export class ProductServices {
         }
     }
 
-    async getAllProducts() {
-        const rows = await this.productRepository.findAll()
-        return rows.map(row => this.formatProduct(row))
+    async getAllProducts(page: number, limit: number) {
+        const [rows, total] = await Promise.all([
+            this.productRepository.findAllPaginated(page, limit),
+            this.productRepository.countProducts()
+        ])
+        return { 
+            products: rows.map(row => this.formatProduct(row)),
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total/limit)
+            }
+        }
     }
 
     async getProductById(id: number) {

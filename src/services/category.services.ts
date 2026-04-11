@@ -4,8 +4,15 @@ import type { CreateCategoryData, UpdateCategoryData } from '../types/category.t
 export class CategoryServices {
     private categoryRepository = new CategoryRepository()
 
-    async getAllCategories() {
-        return await this.categoryRepository.findAll()
+    async getAllCategories(page: number, limit: number) {
+        const [categories, total] = await Promise.all([
+            this.categoryRepository.findAllPaginated(page, limit),
+            this.categoryRepository.countCategories(),
+        ])
+        return {
+            categories,
+            pagination: { total, page, limit, totalPages: Math.ceil(total / limit) },
+        }
     }
 
     async getCategoryById(id: number) {

@@ -10,8 +10,9 @@ import staffRoutes from './routes/staff.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import categoryRoutes from './routes/category.routes.js'
 import productRoutes from './routes/product.routes.js'
-import customerRoutes from './routes/customer.routes.js'
+import clientAdminRoutes from './routes/client-admin.routes.js'
 import orderRoutes from './routes/order.routes.js'
+import clientRoutes from './routes/client.routes.js'
 
 const app = express();
 
@@ -30,7 +31,7 @@ const swaggerDocument = JSON.parse(
   readFileSync(path.join(__dirname, '../build/swagger.json'), 'utf-8')
 ) as Record<string, unknown>
 swaggerDocument['servers'] = [
-  { url: 'http://localhost:3000', description: 'Local' },
+  { url: `http://${process.env.HOST ?? '192.168.1.7'}:${process.env.PORT ?? 3000}`, description: 'Local' },
 ]
 
 app.get('/', (_req, res) => {
@@ -46,8 +47,9 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
 app.use('/api/admin/staff', staffRoutes)
 app.use('/api/admin/categories', categoryRoutes)
 app.use('/api/admin/products', productRoutes)
-app.use('/api/admin/customers', customerRoutes)
+app.use('/api/admin/customers', clientAdminRoutes)
 app.use('/api/admin/orders', orderRoutes)
+app.use('/api/client', clientRoutes)
 app.use('/api/auth', authRoutes)
 
 export default app;

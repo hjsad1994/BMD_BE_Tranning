@@ -40,6 +40,15 @@ export class CategoryRepository {
         return rows
     }
 
+    async findAllPaginated(page: number, limit: number): Promise<Category[]> {
+        const offset = (page - 1) * limit
+        const [rows] = await pool.promise().query<Category[]>(
+            'SELECT id, name, description, status, created_at, updated_at FROM categories WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT ? OFFSET ?',
+            [limit, offset]
+        )
+        return rows
+    }
+
     async createCategory(data: CreateCategoryData): Promise<number> {
         const existing = await this.findByName(data.name)
         if (existing) {

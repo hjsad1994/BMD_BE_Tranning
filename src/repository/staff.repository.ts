@@ -53,7 +53,16 @@ export class StaffRepository {
 
     async findAll(): Promise<Staff[]> {
         const [rows] = await pool.promise().query<Staff[]>(
-            'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM staff'
+            'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM staff ORDER BY created_at DESC'
+        )
+        return rows
+    }
+
+    async findAllPaginated(page: number, limit: number): Promise<Staff[]> {
+        const offset = (page - 1) * limit
+        const [rows] = await pool.promise().query<Staff[]>(
+            'SELECT id, username, first_name, last_name, email, phone, address, avatar, status, created_at, updated_at FROM staff ORDER BY created_at DESC LIMIT ? OFFSET ?',
+            [limit, offset]
         )
         return rows
     }

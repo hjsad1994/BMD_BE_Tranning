@@ -11,7 +11,7 @@ const productController = new ProductController()
 
 router.get('/', authenticate, requireStaff, productController.getAllProductsHandler.bind(productController))
 router.get('/category', authenticate, requireStaff, productController.getProductsByCategoryHandler.bind(productController))
-router.get('/detail', authenticate, requireStaff, productController.getProductByIdHandler.bind(productController))
+router.get('/:productId', authenticate, requireStaff, productController.getProductByIdHandler.bind(productController))
 router.post('/', authenticate, requireStaff, validate(CreateProductSchema), productController.createProductHandler.bind(productController))
 router.put('/', authenticate, requireStaff, validate(UpdateProductSchema), productController.updateProductHandler.bind(productController))
 router.delete('/', authenticate, requireStaff, productController.deleteProductHandler.bind(productController))

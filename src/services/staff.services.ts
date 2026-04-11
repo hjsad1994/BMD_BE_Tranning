@@ -106,8 +106,15 @@ export class StaffServices {
         const passwordHash = await bcrypt.hash(newPassword, 10) 
         return this.staffRepository.updatePassword(id ,passwordHash)
     }
-    async getAllStaffProfile() {
-        return await this.staffRepository.findAll()
+    async getAllStaffProfile(page: number, limit: number) {
+        const [staffs, total] = await Promise.all([
+            this.staffRepository.findAllPaginated(page, limit),
+            this.staffRepository.countStaff(),
+        ])
+        return {
+            staff: staffs,
+            pagination: { total, page, limit, totalPages: Math.ceil(total / limit) },
+        }
     }
     async getProfileStaff(id: number) {
         const staff = await this.staffRepository.findById(id)

@@ -3,23 +3,33 @@ import {
     Controller,
     Delete,
     Get,
+    Path,
     Post,
     Put,
     Query,
     Route,
     Security,
     Tags,
-    UploadedFile,
+    // UploadedFile, // temporarily commented out (upload image via Swagger not yet configured)
 } from 'tsoa'
 import type { Request as ExpressRequest, Response } from 'express'
 import { ProductServices } from '../services/product.services.js'
+import type {
+    ApiResponse,
+    ApiMessageResponse,
+    ApiErrorResponse,
+    ProductResponse,
+    ImageUrlResponse,
+    CreatedProductResponse,
+    ProductListResponse
+} from '../types/api-response.types.js'
 
 interface CreateProductBody {
     /** @example 1 */
     category_id?: number
     /** @example "iPhone 15" */
     name: string
-    /** @example "test test test" */
+    /** @example "Latest Apple smartphone" */
     description?: string
     /** @example 999.99 */
     price: number
@@ -30,13 +40,13 @@ interface CreateProductBody {
 interface UpdateProductBody {
     /** @example 2 */
     category_id?: number
-    /** @example "iPhone" */
+    /** @example "iPhone 15 Pro" */
     name?: string
-    /** @example "updated test test etst" */
+    /** @example "Updated description" */
     description?: string
     /** @example 1199.99 */
     price?: number
-    /** @example "https://example.com/1.png" */
+    /** @example "https://example.com/new.png" */
     image_url?: string
     /** @example "active" */
     status?: 'active' | 'inactive'
@@ -45,15 +55,26 @@ interface UpdateProductBody {
 const productService = new ProductServices()
 
 @Route('api/admin/products')
-@Tags('Products')
+@Tags('Admin - Products')
 @Security('bearerAuth')
 export class ProductController extends Controller {
     /** @summary Get all products */
     @Get()
-    async getAllProducts(): Promise<unknown> {
+    async getAllProducts(
+        /** @example 1 */  @Query() page: number = 1,
+        /** @example 20 */ @Query() limit: number = 20
+    ): Promise<ApiResponse<ProductListResponse> | ApiErrorResponse> {
+        if (page < 1 || !Number.isInteger(Number(page))) {
+            this.setStatus(400)
+            return { success: false, message: 'page must be a positive integer >= 1' }
+        }
+        if (limit < 1 || limit > 100) {
+            this.setStatus(400)
+            return { success: false, message: 'limit must be between 1 and 100' }
+        }
         try {
-            const result = await productService.getAllProducts()
-            return { success: true, data: result, message: 'Get products successfully' }
+            const result = await productService.getAllProducts(Number(page), Number(limit))
+            return { success: true, data: result as ProductListResponse, message: 'Get products successfully' }
         } catch (error) {
             this.setStatus(500)
             return { success: false, message: error instanceof Error ? error.message : 'Server error' }
@@ -62,14 +83,16 @@ export class ProductController extends Controller {
 
     /** @summary Get products by category */
     @Get('category')
-    async getProductsByCategory(/** @example 1 */ @Query() id: number): Promise<unknown> {
-        if (!id || Number.isNaN(id)) {
+    async getProductsByCategory(
+        /** @example 1 */ @Query() categoryId: number
+    ): Promise<ApiResponse<ProductResponse[]> | ApiErrorResponse> {
+        if (!categoryId || Number.isNaN(categoryId)) {
             this.setStatus(400)
             return { success: false, message: 'Invalid category id' }
         }
         try {
-            const result = await productService.getProductsByCategory(id)
-            return { success: true, data: result, message: 'Get products by category successfully' }
+            const result = await productService.getProductsByCategory(categoryId)
+            return { success: true, data: result as unknown as ProductResponse[], message: 'Get products by category successfully' }
         } catch (error) {
             this.setStatus(400)
             return { success: false, message: error instanceof Error ? error.message : 'Category not found' }
@@ -77,15 +100,17 @@ export class ProductController extends Controller {
     }
 
     /** @summary Get a product by ID */
-    @Get('detail')
-    async getProductById(/** @example 1 */ @Query() id: number): Promise<unknown> {
-        if (!id || Number.isNaN(id)) {
+    @Get('{productId}')
+    async getProductById(
+        /** @example 1 */ @Path() productId: number
+    ): Promise<ApiResponse<ProductResponse> | ApiErrorResponse> {
+        if (!productId || Number.isNaN(productId)) {
             this.setStatus(400)
             return { success: false, message: 'Invalid product id' }
         }
         try {
-            const result = await productService.getProductById(id)
-            return { success: true, data: result, message: 'Get product successfully' }
+            const result = await productService.getProductById(productId)
+            return { success: true, data: result as unknown as ProductResponse, message: 'Get product successfully' }
         } catch (error) {
             this.setStatus(404)
             return { success: false, message: error instanceof Error ? error.message : 'Product not found' }
@@ -94,11 +119,13 @@ export class ProductController extends Controller {
 
     /** @summary Create a new product */
     @Post()
-    async createProduct(@Body() body: CreateProductBody): Promise<unknown> {
+    async createProduct(
+        @Body() body: CreateProductBody
+    ): Promise<ApiResponse<CreatedProductResponse> | ApiErrorResponse> {
         try {
             const result = await productService.createProduct(body)
             this.setStatus(201)
-            return { success: true, data: result, message: 'Product created successfully' }
+            return { success: true, data: result as CreatedProductResponse, message: 'Product created successfully' }
         } catch (error) {
             this.setStatus(400)
             return { success: false, message: error instanceof Error ? error.message : 'Create product failed' }
@@ -110,7 +137,7 @@ export class ProductController extends Controller {
     async updateProduct(
         /** @example 1 */ @Query() id: number,
         @Body() body: UpdateProductBody
-    ): Promise<unknown> {
+    ): Promise<ApiMessageResponse | ApiErrorResponse> {
         if (!id || Number.isNaN(id)) {
             this.setStatus(400)
             return { success: false, message: 'Invalid product id' }
@@ -120,8 +147,8 @@ export class ProductController extends Controller {
             return { success: false, message: 'Request body is empty' }
         }
         try {
-            const result = await productService.updateProduct(id, body)
-            return { success: true, data: result, message: 'Product updated successfully' }
+            await productService.updateProduct(id, body)
+            return { success: true, message: 'Product updated successfully' }
         } catch (error) {
             this.setStatus(400)
             return { success: false, message: error instanceof Error ? error.message : 'Update product failed' }
@@ -130,7 +157,9 @@ export class ProductController extends Controller {
 
     /** @summary Delete a product */
     @Delete()
-    async deleteProduct(/** @example 1 */ @Query() id: number): Promise<unknown> {
+    async deleteProduct(
+        /** @example 1 */ @Query() id: number
+    ): Promise<ApiMessageResponse | ApiErrorResponse> {
         if (!id || Number.isNaN(id)) {
             this.setStatus(400)
             return { success: false, message: 'Invalid product id' }
@@ -146,7 +175,9 @@ export class ProductController extends Controller {
 
     /** @summary Restore a deleted product */
     @Put('restore')
-    async restoreProduct(/** @example 1 */ @Query() id: number): Promise<unknown> {
+    async restoreProduct(
+        /** @example 1 */ @Query() id: number
+    ): Promise<ApiMessageResponse | ApiErrorResponse> {
         if (!id || Number.isNaN(id)) {
             this.setStatus(400)
             return { success: false, message: 'Invalid product id' }
@@ -156,41 +187,48 @@ export class ProductController extends Controller {
             return { success: true, message: 'Product restored successfully' }
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Restore product failed'
-            const status = message === 'Product not found or not deleted' ? 404 : 400
-            this.setStatus(status)
+            this.setStatus(message === 'Product not found or not deleted' ? 404 : 400)
             return { success: false, message }
         }
     }
 
-    /** @summary Upload product image */
-    @Post('upload-image')
-    async uploadProductImage(
-        /** @example 1 */ @Query() id: number,
-        @UploadedFile() image: Express.Multer.File
-    ): Promise<unknown> {
-        if (!id || Number.isNaN(id)) {
-            this.setStatus(400)
-            return { success: false, message: 'Invalid product id' }
+    // /** @summary Upload product image */
+    // @Post('upload-image')
+    // async uploadProductImage(
+    //     /** @example 1 */ @Query() id: number,
+    //     @UploadedFile() image: Express.Multer.File
+    // ): Promise<ApiResponse<ImageUrlResponse> | ApiErrorResponse> {
+    //     if (!id || Number.isNaN(id)) {
+    //         this.setStatus(400)
+    //         return { success: false, message: 'Invalid product id' }
+    //     }
+    //     if (!image) {
+    //         this.setStatus(400)
+    //         return { success: false, message: 'No image file provided' }
+    //     }
+    //     try {
+    //         const image_url = `/uploads/products/${image.filename}`
+    //         await productService.updateProduct(id, { image_url })
+    //         return { success: true, message: 'Product image uploaded successfully', data: { image_url } }
+    //     } catch (error) {
+    //         this.setStatus(400)
+    //         return { success: false, message: error instanceof Error ? error.message : 'Upload image failed' }
+    //     }
+    // }
+
+    // ── Express handlers ──────────────────────────────────────────────────────
+
+    async getAllProductsHandler(req: ExpressRequest, res: Response) {
+        const page  = Number(req.query.page)  || 1
+        const limit = Number(req.query.limit) || 20
+        if (page < 1) {
+            return res.status(400).json({ success: false, message: 'page must be >= 1' })
         }
-        if (!image) {
-            this.setStatus(400)
-            return { success: false, message: 'No image file provided' }
+        if (limit < 1 || limit > 100) {
+            return res.status(400).json({ success: false, message: 'limit must be between 1 and 100' })
         }
         try {
-            const image_url = `/uploads/products/${image.filename}`
-            await productService.updateProduct(id, { image_url })
-            return { success: true, message: 'Product image uploaded successfully', data: { image_url } }
-        } catch (error) {
-            this.setStatus(400)
-            return { success: false, message: error instanceof Error ? error.message : 'Upload image failed' }
-        }
-    }
-
-    // ── Express-compatible handlers used by routes ──────────────────────────
-
-    async getAllProductsHandler(_req: ExpressRequest, res: Response) {
-        try {
-            const result = await productService.getAllProducts()
+            const result = await productService.getAllProducts(page, limit)
             return res.status(200).json({ success: true, data: result, message: 'Get products successfully' })
         } catch (error) {
             return res.status(500).json({ success: false, message: error instanceof Error ? error.message : 'Server error' })
@@ -198,7 +236,7 @@ export class ProductController extends Controller {
     }
 
     async getProductByIdHandler(req: ExpressRequest, res: Response) {
-        const id = Number(req.query.id)
+        const id = Number(req.params.productId)
         if (!id || Number.isNaN(id)) {
             return res.status(400).json({ success: false, message: 'Invalid product id' })
         }
@@ -211,7 +249,7 @@ export class ProductController extends Controller {
     }
 
     async getProductsByCategoryHandler(req: ExpressRequest, res: Response) {
-        const categoryId = Number(req.query.id)
+        const categoryId = Number(req.query.categoryId)
         if (!categoryId || Number.isNaN(categoryId)) {
             return res.status(400).json({ success: false, message: 'Invalid category id' })
         }
@@ -289,7 +327,7 @@ export class ProductController extends Controller {
             await productService.updateProduct(productId, { image_url: imageUrl })
             return res.status(200).json({ success: true, message: 'Product image uploaded successfully', data: { image_url: imageUrl } })
         } catch (error) {
-            return res.status(400).json({ success: false, message: error instanceof Error ? error.message : 'Update product image failed' })
+            return res.status(400).json({ success: false, message: error instanceof Error ? error.message : 'Upload image failed' })
         }
     }
 }

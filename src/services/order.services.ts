@@ -12,8 +12,15 @@ export class OrderServices {
     private customerRepository = new CustomerRepository()
     private productRepository  = new ProductRepository()
 
-    async getAllOrders() {
-        return await this.orderRepository.findAll()
+    async getAllOrders(page: number, limit: number) {
+        const [orders, total] = await Promise.all([
+            this.orderRepository.findAllPaginated(page, limit),
+            this.orderRepository.countOrders(),
+        ])
+        return {
+            orders,
+            pagination: { total, page, limit, totalPages: Math.ceil(total / limit) },
+        }
     }
 
     async getOrderById(id: number): Promise<OrderDetail> {

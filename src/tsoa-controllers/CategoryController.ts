@@ -3,6 +3,7 @@ import {
     Controller,
     Delete,
     Get,
+    Path,
     Post,
     Put,
     Query,
@@ -12,6 +13,14 @@ import {
 } from 'tsoa'
 import type { Request as ExpressRequest, Response } from 'express'
 import { CategoryServices } from '../services/category.services.js'
+import type {
+    ApiResponse,
+    ApiMessageResponse,
+    ApiErrorResponse,
+    CategoryResponse,
+    CategoryListResponse,
+    CreatedCategoryResponse,
+} from '../types/api-response.types.js'
 
 interface CreateCategoryBody {
     /** @example "Apple" */
@@ -32,15 +41,26 @@ interface UpdateCategoryBody {
 const categoryService = new CategoryServices()
 
 @Route('api/admin/categories')
-@Tags('Categories')
+@Tags('Admin - Categories')
 @Security('bearerAuth')
 export class CategoryController extends Controller {
     /** @summary Get all categories */
     @Get()
-    async getAllCategories(): Promise<unknown> {
+    async getAllCategories(
+        /** @example 1 */  @Query() page: number = 1,
+        /** @example 20 */ @Query() limit: number = 20
+    ): Promise<ApiResponse<CategoryListResponse> | ApiErrorResponse> {
+        if (page < 1 || !Number.isInteger(Number(page))) {
+            this.setStatus(400)
+            return { success: false, message: 'page must be a positive integer >= 1' }
+        }
+        if (limit < 1 || limit > 100) {
+            this.setStatus(400)
+            return { success: false, message: 'limit must be between 1 and 100' }
+        }
         try {
-            const result = await categoryService.getAllCategories()
-            return { success: true, data: result, message: 'Get categories successfully' }
+            const result = await categoryService.getAllCategories(Number(page), Number(limit))
+            return { success: true, data: result as CategoryListResponse, message: 'Get categories successfully' }
         } catch (error) {
             this.setStatus(500)
             return { success: false, message: error instanceof Error ? error.message : 'Server error' }
@@ -48,15 +68,17 @@ export class CategoryController extends Controller {
     }
 
     /** @summary Get a category by ID */
-    @Get('detail')
-    async getCategoryById(/** @example 1 */ @Query() id: number): Promise<unknown> {
-        if (!id || Number.isNaN(id)) {
+    @Get('{categoryId}')
+    async getCategoryById(
+        /** @example 1 */ @Path() categoryId: number
+    ): Promise<ApiResponse<CategoryResponse> | ApiErrorResponse> {
+        if (!categoryId || Number.isNaN(categoryId)) {
             this.setStatus(400)
             return { success: false, message: 'Invalid category id' }
         }
         try {
-            const result = await categoryService.getCategoryById(id)
-            return { success: true, data: result, message: 'Get category successfully' }
+            const result = await categoryService.getCategoryById(categoryId)
+            return { success: true, data: result as CategoryResponse, message: 'Get category successfully' }
         } catch (error) {
             this.setStatus(404)
             return { success: false, message: error instanceof Error ? error.message : 'Category not found' }
@@ -65,11 +87,13 @@ export class CategoryController extends Controller {
 
     /** @summary Create a new category */
     @Post()
-    async createCategory(@Body() body: CreateCategoryBody): Promise<unknown> {
+    async createCategory(
+        @Body() body: CreateCategoryBody
+    ): Promise<ApiResponse<CreatedCategoryResponse> | ApiErrorResponse> {
         try {
             const result = await categoryService.createCategory(body)
             this.setStatus(201)
-            return { success: true, data: result, message: 'Category created successfully' }
+            return { success: true, data: result as CreatedCategoryResponse, message: 'Category created successfully' }
         } catch (error) {
             this.setStatus(400)
             return { success: false, message: error instanceof Error ? error.message : 'Create category failed' }
@@ -81,7 +105,7 @@ export class CategoryController extends Controller {
     async updateCategory(
         /** @example 1 */ @Query() id: number,
         @Body() body: UpdateCategoryBody
-    ): Promise<unknown> {
+    ): Promise<ApiMessageResponse | ApiErrorResponse> {
         if (!id || Number.isNaN(id)) {
             this.setStatus(400)
             return { success: false, message: 'Invalid category id' }
@@ -91,8 +115,8 @@ export class CategoryController extends Controller {
             return { success: false, message: 'Request body is empty' }
         }
         try {
-            const result = await categoryService.updateCategory(id, body)
-            return { success: true, data: result, message: 'Category updated successfully' }
+            await categoryService.updateCategory(id, body)
+            return { success: true, message: 'Category updated successfully' }
         } catch (error) {
             this.setStatus(400)
             return { success: false, message: error instanceof Error ? error.message : 'Update category failed' }
@@ -101,7 +125,9 @@ export class CategoryController extends Controller {
 
     /** @summary Delete a category */
     @Delete()
-    async deleteCategory(/** @example 1 */ @Query() id: number): Promise<unknown> {
+    async deleteCategory(
+        /** @example 1 */ @Query() id: number
+    ): Promise<ApiMessageResponse | ApiErrorResponse> {
         if (!id || Number.isNaN(id)) {
             this.setStatus(400)
             return { success: false, message: 'Invalid category id' }
@@ -117,7 +143,9 @@ export class CategoryController extends Controller {
 
     /** @summary Restore a deleted category */
     @Put('restore')
-    async restoreCategory(/** @example 1 */ @Query() id: number): Promise<unknown> {
+    async restoreCategory(
+        /** @example 1 */ @Query() id: number
+    ): Promise<ApiMessageResponse | ApiErrorResponse> {
         if (!id || Number.isNaN(id)) {
             this.setStatus(400)
             return { success: false, message: 'Invalid category id' }
@@ -133,11 +161,19 @@ export class CategoryController extends Controller {
         }
     }
 
-    // ── Express-compatible handlers used by routes ──────────────────────────
+    // ── Express handlers ──────────────────────────────────────────────────────
 
-    async getAllCategoriesHandler(_req: ExpressRequest, res: Response) {
+    async getAllCategoriesHandler(req: ExpressRequest, res: Response) {
+        const page  = Number(req.query.page)  || 1
+        const limit = Number(req.query.limit) || 20
+        if (page < 1) {
+            return res.status(400).json({ success: false, message: 'page must be >= 1' })
+        }
+        if (limit < 1 || limit > 100) {
+            return res.status(400).json({ success: false, message: 'limit must be between 1 and 100' })
+        }
         try {
-            const result = await categoryService.getAllCategories()
+            const result = await categoryService.getAllCategories(page, limit)
             return res.status(200).json({ success: true, data: result, message: 'Get categories successfully' })
         } catch (error) {
             return res.status(500).json({ success: false, message: error instanceof Error ? error.message : 'Server error' })
@@ -145,7 +181,7 @@ export class CategoryController extends Controller {
     }
 
     async getCategoryByIdHandler(req: ExpressRequest, res: Response) {
-        const id = Number(req.query.id)
+        const id = Number(req.params.categoryId)
         if (!id || Number.isNaN(id)) {
             return res.status(400).json({ success: false, message: 'Invalid category id' })
         }

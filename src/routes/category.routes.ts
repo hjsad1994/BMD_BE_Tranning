@@ -9,7 +9,7 @@ const router = Router()
 const categoryController = new CategoryController()
 
 router.get('/', authenticate, requireStaff, categoryController.getAllCategoriesHandler.bind(categoryController))
-router.get('/detail', authenticate, requireStaff, categoryController.getCategoryByIdHandler.bind(categoryController))
+router.get('/:categoryId', authenticate, requireStaff, categoryController.getCategoryByIdHandler.bind(categoryController))
 router.post('/', authenticate, requireStaff, validate(CreateCategorySchema), categoryController.createCategoryHandler.bind(categoryController))
 router.put('/', authenticate, requireStaff, validate(UpdateCategorySchema), categoryController.updateCategoryHandler.bind(categoryController))
 router.delete('/', authenticate, requireStaff, categoryController.deleteCategoryHandler.bind(categoryController))
